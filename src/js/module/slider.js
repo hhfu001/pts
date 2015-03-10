@@ -102,13 +102,11 @@ define(['tui/event'], function(Event) {
 
 			var isFade = self.op.fade;
 			var panels = self.panel;
+			var duration = self.op.duration ? self.op.duration : '25';
 
-			// isFade ? panels.eq(prev).css({'z-index': 0}).stop().fadeOut(100) : panels.hide();
-			panels.eq(prev).css({'z-index': 0});
+			panels.eq(prev)[isFade ? 'fadeOut' : 'hide'](duration);
+			panels.eq(self.current)[isFade ? 'fadeIn' : 'show'](duration);
 
-			panels.eq(self.current).css({'z-index': 2})[isFade ? 'fadeIn' : 'show'](self.op.duration ? self.op.duration : '100', function(){
-				panels.eq(prev).hide();
-			});
 			self.trigger('after', [self.current, self]);
 		},
 		prev: function(auto) {

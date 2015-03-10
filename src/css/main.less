@@ -1,170 +1,49 @@
 @import "reset";
 @import "common";
-@import "pie";
 
-
-
-
-/*list*/
-.banner { min-width: 1000px; height: 190px; margin: 0 auto; overflow: hidden; background: url(../img/loading.gif) 50% 50% no-repeat; text-align: center;}
-
-.banner img{ margin: 0 auto; -webkit-transition: all 0.2s ease-out;
-					-ms-transition: all 0.2s ease-out;
-					-moz-transition: all 0.2s ease-out;
-					-o-transition: all 0.2s ease-out;
-					transition: all 0.2s ease-out;}
-
-
-.content{margin-top: 10px;}
-.content i{ font-style: normal;}
-.content .b{ color: @bgred;}
-.content .list a:hover{ text-decoration: underline;}
-.main{ width: 750px; float: left; margin-bottom: 30px; background: #fff;}
-.side{ width: 240px; float: right; margin-bottom: 30px;}
-
-.main .tabs{ position: relative; padding-left: 10px; height: 65px; line-height: 65px; border-bottom: 1px solid #eee; width: 740px;}
-.main .tabs a{ padding: 0 15px; display: inline-block; height: 65px;}
-.main .tabs .current{border-bottom: 2px solid @bgred; height: 63px; color: @bgred;}
-.main .tabs a:hover{color: @bgred;}
-.main .tabs .select{ position: absolute; top: 0; right: 25px;}
-
-.main .list li{position: relative; padding: 29px 0; height: 94px; padding-left: 160px; border-bottom: 1px solid #eee; }
-.main .list li:hover{ background: #fafafa; border-bottom-color: @bgred;}
-.main .pic img,
-.main .pic{ width: 120px; height: 90px;}
-.main .pic{ position: absolute; left: 30px; top: 29px; overflow: hidden; background: url(../img/loading.gif) 50% 50% no-repeat;}
-.main .pic img{-webkit-transition: all 0.3s ease-out;
-					-ms-transition: all 0.3s ease-out;
-					-moz-transition: all 0.3s ease-out;
-					-o-transition: all 0.3s ease-out;
-					transition: all 0.3s ease-out;
+.content{ position: relative; margin: 20px auto;}
+.main{
+	width: 790px; padding: 20px; margin-right: 380px; border: 1px solid #eee;
+	.tabs{
+		li{ display: inline;}
+		a{ display: inline-block; margin-right: 20px; color: #fff; background: #178a7d; padding: 0 10px; line-height: 2; font-size: 14px; border-radius: 3px; .ease;}
+		.current,a:hover{ background: #00a392;}
+	}
 }
-.main .pic:hover img{ -webkit-transform: scale(1.04);
-						-moz-transform: scale(1.04);
-						-o-transform: scale(1.04);
-						transform: scale(1.04);
+
+.pack-list{
+	li{ position: relative; padding:20px 0 20px 258px; height: 138px; border-bottom: 1px dashed #ddd; line-height: 2; font-size: 13px;}
+	.pic{ position: absolute; left: 0; top: 20px; width: 248px; height: 138px; overflow: hidden;}
+	.pic img{width: 248px; height: 138px; .ease;}
+	.pic:hover img{ .scale;}
+	h6{ font-size: 16px; height: 32px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;}
+	.txt{ height: 52px; overflow: hidden;}
+	.tag{ margin-right: 10px;}
+	.gicon-v{ margin: 0 10px;}
 }
-.main .list .empty,
-.main .list .empty:hover{ height: 500px; padding: 0; line-height: 500px; text-align: center; background: #fff; border-bottom: none; font-size: 16px;}
-
-.main .list .caption{ font-size: 16px; width: 420px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
-
-.main .txt p{ padding-top: 22px;}
-.main .txt p span{ padding-right: 20px;}
-.main .txt .g-icon{ padding-right: 8px;}
-.main .txt .p1 em{ color: @black;}
-
-
-/**/
-.main .progress{ position: absolute; right: 40px; top: 30px; *width: 180px;}
-
+.pack-list-mini{
+	li{ padding-left: 80px; height: 52px;}
+	.pic{ border: 1px solid #ddd;}
+	.pic, .pic img{ width: 70px; height: 52px;}
+}
+.avtar-list{
+	width: 110%;
+	li{ float: left; width: 82px; height: 82px; margin: 10px 6px 10px 0; overflow: hidden;}
+	li img{ width: 82px; height: 82px; .ease;}
+	a:hover img{ .scale;}
+}
+/*ui-paging分页*/
+.g-paging{
+	padding: 20px 0; text-align: right;
+	a{display: inline-block; margin: 0 3px; width: 25px; height: 25px; line-height: 25px; text-align: center; border-radius: 100%;}
+	a:hover{background:#538eca; color: #fff; }
+	.current, .current:hover{ background: @yi; color: #fff;}
+	.btn{ margin-left:12px;  width: 57px; height: 29px; line-height: 29px; border: 1px solid #eee; border-radius: 0;}
+	.btn:hover{ background: @yi;}
+}
 
 .side{
-	.b{ padding-left: 5px;}
-	.title{ font-size: 18px; text-align: center; line-height: 65px; border-bottom: 1px solid #eee; font-weight: 400; color: @black;}
-	.list{ margin-bottom: 10px; background: #fff;}
-	.list li{ padding: 15px; border-bottom: 1px solid #eee;}
-	.list li:hover{ border-color: @bgred; background: #f7f7f7;}
-	.list em{ margin-bottom: 12px; display: block; font-size: 14px; white-space: nowrap; text-overflow:ellipsis; overflow: hidden;  }
-
-	.ad_banner, .ad_banner img{ width: 240px; height: 230px;}
+	position: absolute; right: 0; top: 0;width: 345px;
+	.list{padding: 20px; width: 305px; border: 1px solid #ccc;} 
+	.title{ font-size: 14px;}
 }
-
-/*detail*/
-.m-detail{width: 750px; float: left; background: #fff;}
-.s-detail{width: 240px; float: right;}
-
-.m-detail{
-	.title{ padding: 20px; border-left: 5px solid  @bgred; border-bottom: 1px solid #eee; line-height: 1.5; color: @black;}
-	.title h3{  margin-bottom: 23px; font-size: 15px; }
-
-	.brief{
-		padding: 20px; line-height: 1.5; background: #fdfdfd; border-bottom: 1px solid #eee;color: @black;
-		h4{ line-height: 2; color: @bgred; font-size: 18px;}
-	}
-	.tabs{ position: relative; height: 64px; padding: 0 20px; line-height: 64px; border-bottom: 1px solid #eee; font-size: 18px;}
-	.tabs a{ margin-right: 30px; display: inline-block;}
-	.tabs .current{ padding: 0 10px; height: 61px; border-bottom:3px solid @bgred; color: @bgred;}
-	.tabs .g-share{ position: absolute; right: 20px; top: 0;}
-	.tabs .g-share a{ margin-right: 5px;}
-	.detail{ padding: 20px; line-height: 1.5;}
-
-}
-
-.s-detail{
-	background: #fff; color: #707070;
-	.buy{ padding: 20px;}
-	.tr{
-		line-height: 2;
-		em{ font-size: 14px;}
-		.b{ font-size: 16px;}
-		input{ margin: 3px; width: 57px; height: 21px; padding: 3px 0; text-align: center; border: 1px solid #eee; border-radius: 2px; vertical-align: middle;}
-		.btn{ display: inline-block; width: 27px; height: 27px; line-height: 27px; text-align: center; font-size: 24px; border-radius: 3px; border: 1px solid #eee; vertical-align: middle; cursor: pointer;}
-		.btn:hover{ background: @bgred; color: #fff;}
-		.btn:active{ background: #b5b5b5; color: #fff;}
-	}
-	.progress-bar{ margin: 8px auto; position: relative; background: #eee; height: 5px; overflow: hidden; }
-	.progress{ position: absolute; left: 0; top: 0; background: #d10e44; width: 1%; height: 100%;
-			transition: all 1s;
-			-moz-transition: all 1s;	/* Firefox 4 */
-			-webkit-transition: all 1s;	/* Safari 和 Chrome */
-			-o-transition: all 1s;	/* Opera */
-	}
-
-	.statistics{ padding:18px 20px; border-top: 1px solid #eee;
-		.p{ position: relative; line-height: 2;}
-		.t{ position: absolute; right: 0; top: 0;}
-	}
-
-	.op{
-		height: 42px;
-		.btn{ float: left; height: 40px; line-height: 40px; border: 1px solid #eee; border-radius: 3px; vertical-align: middle;
-
-			transition: all 0.2s;
-			-moz-transition: all 0.2s;	/* Firefox 4 */
-			-webkit-transition: all 0.2s;	/* Safari 和 Chrome */
-			-o-transition: all 0.2s;	/* Opera */
-		}
-		.btn-favor{ width: 80px; text-align: center; }
-		.btn-favor i{ display: inline-block; vertical-align: middle; background: @icons 0 -159px; width: 22px; height: 18px; line-height: 18px;}
-		.btn-favor .f2{ display: none;}
-		.btn-favor:hover{ background: @bgred;
-			.f1{display: none;}
-			.f2{ display: inline; color: #fff;}
-			i{ background-position: -24px -159px;}
-		}
-		.btn-favor:active{ background: #b5b5b5;}
-		.btn-favor:active i{ background-position: -24px -159px;}
-		.btn-buy{ float: right; display: inline; width: 110px; background: @bgred; color: #fff; font-size: 18px; border-color: @bgred; cursor: pointer;}
-		.btn-buy:hover{ background: #840025; border-color: #840025;}
-		.btn-buy:active{ background: #b5b5b5; border-color: #b5b5b5;}
-		.favored .f1{ display: none;}
-		.favored .f2{ display: inline;}
-	}
-}
-
-.page-help{
-	position: relative; 
-	.main{ 
-		margin-left: 260px; background: #fff; float: none; min-height: 300px;
-		.title{ margin: 0 30px; color: @bgred; font-weight: 700; padding-top: 20px; font-size: 22px; border-bottom: 3px solid @bgred; line-height: 35px;}
-	}
-	.side{ 
-		position: absolute; left: 0; top: 0; padding: 20px 0; width: 240px; background: #fff; float: none;
-		h3{ font-size: 24px;  margin:0 25px; border-bottom: 2px solid #eee; line-height: 1.5;}
-		li{ font-size: 14px; line-height: 35px;}
-		li a{ display: block; padding-left: 50px; }
-		li a:hover{ background: #fff; text-decoration: underline;}
-		li .current,li .current:hover{ border-left: 3px solid @bgred; background: #f5f5f5; text-decoration: none;}
-	}
-
-	.article{ 
-		padding: 30px 30px 100px; line-height: 2; 
-		h3{ color: @black; margin-top: 30px; font-weight: 700; line-height: 2;}
-		h2{ font-size: 18px; color: @black; text-align: center; font-weight: 700;}
-	}
-}
-
-
-
-

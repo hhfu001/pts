@@ -8,16 +8,9 @@ exports.map = [
 	['http://js.tudouui.com/v3/dist', localRoot + '/src'],
 	['http://css.tudouui.com/v3/dist', localRoot + '/src'],
 	['http://ui.tudou.com/v3/dist', localRoot + '/src'],
-
-	// ['http://static.jishachengta.com.cn/build', localRoot + '/build'],
-
 	['http://js.tudouui.com/v3/src', localRoot + '/src'],
 	['http://css.tudouui.com/v3/src', localRoot + '/src'],
 	['http://ui.tudou.com/v3/src', localRoot + '/src'],
-	
-
-	// ['http://include.jishachengta.com.cn/js/web/index.js', localRoot + '/build/js/page/index.js'],
-
 
 ];
 

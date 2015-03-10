@@ -1,9 +1,5 @@
-require(['./m/nav', 'module/odometer', 'module/slider', 'tui/util/num'], function(Nav, Odometer, Slider, Num) {
-	Nav.init();
-
-	window.odometerOptions = {
-		format: '(,ddd)'
-	};
+require(['app/nav', 'module/slider', 'module/flexisel'], function(Nav, Slider, Flexisel) {
+	Nav.init({disabled: false});
 
 
 	var $focus = $('#jsFocus');
@@ -16,18 +12,28 @@ require(['./m/nav', 'module/odometer', 'module/slider', 'tui/util/num'], functio
 		loop: 5000
 	});
 
-	$focus.on('click', '.prev', function(e){
+	$focus.on('click', '.prev', function(e) {
 		e.preventDefault();
 		prev();
 
-	}).on('click', '.next', function(e){
+	}).on('click', '.next', function(e) {
 		e.preventDefault();
 		next();
-	}).on('mouseenter', function(){
-		$(this).addClass('hover');
+	}).on('mouseenter', function() {
+		$(this).find('.prev').css({
+			left: '20px'
+		});
+		$(this).find('.next').css({
+			right: '20px'
+		});
 		slider.stop();
-	}).on('mouseleave', function(){
-		$(this).removeClass('hover');
+	}).on('mouseleave', function() {
+		$(this).find('.prev').css({
+			left: '-999px'
+		});
+		$(this).find('.next').css({
+			right: '-999px'
+		});
 		slider.start();
 	});
 
@@ -51,29 +57,22 @@ require(['./m/nav', 'module/odometer', 'module/slider', 'tui/util/num'], functio
 		}
 	}
 
+	$('#magazineSlide').flexisel({
+		visibleItems: 4,
+		animationSpeed: 200,
+		autoPlay: false,
+		pauseOnHover: true,
+		enableResponsiveBreakpoints: false
 
+	});
 
-	//
-	if($.browser.msie && $.browser.version == '6.0') {
-		document.execCommand('BackgroundImageCache', false, true);
-	}
-
-	var isIE = $.browser.msie && parseInt($.browser.version < 8);
-
-	$('.odometer').each(function(i, item) {
-		var num = $(item).attr('data-num');
-
-		if(!isIE){
-			var od = new Odometer({
-				el: item,
-				value: 0
-			});
-
-			od.update(num)
-
-		}else{
-			$(item).text(Num.split(num));
-		}
+	$('#memberSlide').flexisel({
+		visibleItems: 5,
+		animationSpeed: 1000,
+		autoPlay: true,
+		autoPlaySpeed: 3000,
+		pauseOnHover: true,
+		enableResponsiveBreakpoints: false
 
 	});
 
