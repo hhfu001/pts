@@ -1,0 +1,112 @@
+@import "reset";
+@import "common";
+@import "odometer";
+
+
+
+.z-assist a{ padding:0 15px; background: @icons 0 -58px no-repeat; color: #898989;}
+.z-assist .favor{ background-position: 0 -82px;}
+.z-assist .cmt{background-position: 0 -109px;}
+
+.progress-bar{ margin: 8px auto; position: relative; background: #eee; height: 5px; overflow:hidden;}
+.progress{ position: absolute; left: 0; top: 0; background: #d10e44; width: 1%; height: 100%;
+		transition: all 1s;
+		-moz-transition: all 1s;	/* Firefox 4 */
+		-webkit-transition: all 1s;	/* Safari 和 Chrome */
+		-o-transition: all 1s;	/* Opera */
+}
+
+.bot,.top,.slide{ min-width: 1000px;}
+.bot{ margin-top: 0;}
+
+.slide{overflow: hidden; width: 1000px; margin: 0 auto;}
+.slide .focus{
+	position: relative; height: 330px; overflow: hidden;
+	.pics{ height: 330px;}
+	li{ position: absolute; display: none; width: 100%; height: 100%;}
+	li a{ display: block; text-align: center; background: url(../img/loading.gif) 50% 50% no-repeat;}
+	img{ height: 330px; margin: 0 auto; }
+}
+.focus .btns{
+	margin: 0 auto; height: 20px; width: 900px; position: relative; top: -30px; z-index: 3; text-align: center;
+	a{ display: inline-block; width: 10px; height: 10px; border: 1px solid #eee; background-color: #eee; vertical-align: middle; margin: 0 5px; border-radius: 2px;}
+	.current{border-color: #fff; background-color: @bgred;}
+}
+
+
+.slide .wrap{background: #d10e44; }
+.slide .data{ margin: 0 auto; width: 1000px; height: 150px; color: #fff;}
+.slide .data li{ float: left; width: 33%; padding-top: 25px; text-align: center; font-size: 18px; line-height: 1.5;}
+.slide .data b{ display: inline-block; vertical-align: middle; font-size: 60px; font-weight: 400; white-space: nowrap;}
+.slide .data sub{ position: relative; padding-left: 7px; top: 10px; font-size: 36px;}
+.focus .btn-switch{
+	width: 1000px; margin: 0 auto; position: relative; z-index: 10; display: none;
+	.prev, .next{ display: inline-block; width: 40px; height: 50px; position: absolute; top: -210px; background: @icons 0 -500px no-repeat;
+				-webkit-transition: opacity 0.8s ease;
+				-moz-transition: opacity 0.8s ease;
+				-o-transition: opacity 0.8s ease;
+				transition: opacity 0.8s ease;
+				filter: alpha(opacity=40);
+				-moz-opacity: 0.4;
+				-webkit-opacity: 0.4;
+				-o-opacity: 0.4;
+				opacity: 0.4;
+
+	}
+	.prev{ left: 20px; background-position: 0 -546px;}
+	.prev:hover{ background-position: 0 -602px;}
+	.next{ right: 20px; background-position: -60px -546px;}
+	.next:hover{ background-position: -60px -602px;}
+}
+.hover .btn-switch{display: block;}
+
+@media screen and (max-width: 1100px){
+	.slide .data{ width: 1000px;}
+}
+
+
+.content i, .content em{ font-style: normal;}
+.content{ overflow:hidden; padding-bottom: 30px;}
+.content .items{ margin-top: 20px;}
+.content .title{ height: 73px; line-height: 73px; padding: 0 20px; border-bottom: 2px solid #d10e44; position: relative;  background: #fff;}
+.content .title h3{ color: @black; font-size: 16px;}
+.content .mo{ position: absolute; right: 20px; font-size: 14px; top:0;}
+.content .list{ width: 110%;}
+.content .list li{ position: relative; width: 320px; float: left; margin:20px 20px 0 0; background: #fff; }
+.content .list li:hover{ box-shadow: 0 3px 8px rgba(0,0,0, 0.3); }
+.content .list .pic,
+.content .pic img{ display: inline-block; width: 320px; height: 240px;
+					-webkit-transition: all 0.3s ease-out;
+					-ms-transition: all 0.3s ease-out;
+					-moz-transition: all 0.3s ease-out;
+					-o-transition: all 0.3s ease-out;
+					transition: all 0.3s ease-out;
+}
+.content .list .pic{overflow: hidden; background: url(../img/loading.gif) 50% 50% no-repeat;}
+.content .pic:hover img{ -webkit-transform: scale(1.04);
+						-moz-transform: scale(1.04);
+						-o-transform: scale(1.04);
+						transform: scale(1.04);
+}
+
+.content .list .icon-ed{ position: absolute; height: 90px; width: 90px; right: 0; bottom: 40px; background: @icons 0 -216px no-repeat; z-index: 2; }
+
+.content .caption{ height: 37px; overflow: hidden; font-size: 13px; padding: 0 10px;  line-height: 37px; white-space: nowrap; text-overflow:ellipsis;}
+
+.content .txt, .z-assist { border-top: 1px solid #e7ebec; padding: 10px;}
+.content .txt{ font-size: 13px;}
+.content .txt p{ position: relative;}
+.content .txt .r{ position: absolute; right: 0; top: 0;}
+.content .txt .b{ color: #d10e44}
+.content .txt2 span{ display: inline-block; width: 50%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;}
+.content .txt2 .t2{ text-align: right;}
+
+
+
+
+
+
+
+
+
+

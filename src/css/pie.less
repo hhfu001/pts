@@ -1,0 +1,60 @@
+.progress-pie { margin: 0 auto 10px;
+    width: 70px;
+    height: 70px;  
+    position: relative;
+    border-radius: 100%;
+    background: @bgred;
+    .pie_left, .pie_right {
+	    width: 70px; 
+	    height: 70px;
+	    position: absolute;
+	    top: 0;left: 0;
+	}
+	.left, .right {
+	    display: block;
+	    width:70px; 
+	    height:70px;
+	    background:#eec7d2;
+	    border-radius: 100%;
+	    position: absolute;
+	    top: 0;
+	    left: 0;
+	    transform: rotate(0deg);
+	    -moz-transform: rotate(0deg);
+	    -webkit-transform: rotate(0deg);
+	    -o-transform: rotate(0deg);
+	    transition: all 0.3s;
+		-moz-transition: all 0.3s;	/* Firefox 4 */
+		-webkit-transition: all 0.3s;	/* Safari 和 Chrome */
+		-o-transition: all 0.3s;	/* Opera */
+	}
+	.pie_right, .right {
+	    clip:rect(0,70px,70px,35px);
+	}
+	.pie_left, .left {
+	    clip:rect(0,35px,70px,0);
+	}
+	.mask {
+	    width: 60px;
+	    height: 60px;
+	    border-radius: 100%;
+	    left: 5px;
+	    top: 5px;
+	    background: #FFF;
+	    position: absolute;
+	    text-align: center;
+	    line-height: 60px;
+	    font-size: 16px;
+	}
+
+	.pie{ position: relative; left: 6px; top: 6px; width: 58px; height: 58px; background: url(../img/pie.png) 0 0 no-repeat; text-align: center; line-height: 58px;}
+	.pie_2{ background-position: -60px 0; }
+	.pie_3{ background-position: -120px 0; }
+	.pie_4{ background-position: -180px 0; }
+	.pie_5{ background-position: -240px 0; }
+	.pie_6{ background-position: -300px 0; }
+	.pie_7{ background-position: 0 -60px; }
+	.pie_8{ background-position: -60px -60px; }
+	.pie_9{ background-position: -120px -60px; }
+	.pie_10{ background-position: -180px -60px; }
+}

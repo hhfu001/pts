@@ -1,0 +1,108 @@
+/**
+ * TUI Dialog Style
+ */
+.tui_dialog {
+	background: #fff;
+	-webkit-box-shadow: 1px 6px 36px rgba(0, 0, 0, 0.5);
+	-moz-box-shadow: 1px 6px 36px rgba(0, 0, 0, 0.5);
+	box-shadow: 1px 6px 36px rgba(0, 0, 0, 0.5);
+	-webkit-border-radius: 5px 5px 3px 3px;
+	-moz-border-radius: 5px 5px 3px 3px;
+	border-radius: 5px 5px 3px 3px;
+	position: absolute;
+	top: -10000px;
+}
+.tui_dialog_holder { width: 450px; }
+
+/* ie style ====================== */
+.tui_dialog_wrap { border-left: 4px solid #e9e9e9; border-right: 4px solid #e9e9e9; }
+.tui_dialog_wrap .tui_dialog_holder { background: #fff; position: relative; }
+.tui_dialog_wrap .tui_dialog_w_tp,
+.tui_dialog_wrap .tui_dialog_w_bm { width: 100%; height: 4px; font-size: 0; background: #e9e9e9; position: absolute; top: -4px; }
+.tui_dialog_wrap .tui_dialog_w_bm { top: auto; bottom: -4px; }
+.tui_dialog_wrap .tui_dialog_w_tl,
+.tui_dialog_wrap .tui_dialog_w_tr,
+.tui_dialog_wrap .tui_dialog_w_bl,
+.tui_dialog_wrap .tui_dialog_w_br { width: 5px; height: 5px; position: absolute; z-index: 1; font-size: 0; }
+.tui_dialog_wrap .tui_dialog_w_tl { top: -4px; left: -4px; }
+.tui_dialog_wrap .tui_dialog_w_tr { top: -4px; right: -4px; background-position: -5px 0; }
+.tui_dialog_wrap .tui_dialog_w_bl { bottom: -4px; left: -4px; background-position: 0 -5px; }
+.tui_dialog_wrap .tui_dialog_w_br { bottom: -4px; right: -4px; background-position: -5px -5px; }
+
+.tui_dialog_wrap { _border-bottom: 4px solid #e9e9e9; }
+.tui_dialog_wrap .tui_dialog_w_bm,
+.tui_dialog_wrap .tui_dialog_w_bl,
+.tui_dialog_wrap .tui_dialog_w_br { _display: none; }
+
+.tudou_dialog .tui_dialog_wrap { border-color: #ccc; }
+.tudou_dialog .tui_dialog_wrap .tui_dialog_w_tp,
+.tudou_dialog .tui_dialog_wrap .tui_dialog_w_bm { background: #ccc; }
+.tudou_dialog .tui_dialog_wrap .tui_dialog_w_tl { background-position: -10px 0; }
+.tudou_dialog .tui_dialog_wrap .tui_dialog_w_tr { background-position: -15px 0; }
+.tudou_dialog .tui_dialog_wrap .tui_dialog_w_bl { background-position: -10px -5px; }
+.tudou_dialog .tui_dialog_wrap .tui_dialog_w_br { background-position: -15px -5px; }
+/* end =========================== */
+
+.tui_dialog_header {
+	height: 28px; background: #d10e44;
+	-webkit-border-radius: 3px 3px 0 0;
+	-moz-border-radius: 3px 3px 0 0;
+	border-radius: 3px 3px 0 0;
+	overflow: hidden;
+}
+.tui_dialog_title {
+	padding: 0 27px 0 10px;
+	font-size: 12px; font-weight: bold;
+	line-height: 28px; *line-height: 29px;
+	cursor: default; color: #fff;
+}
+.tui_dialog_close {
+	float: right;
+	margin: 7px 6px 0;
+	cursor: pointer;
+	color: #999; font-size: 14px;
+}
+.tui_dialog_close:hover{ color: #fff;}
+
+.tui_dialog_content { overflow: auto; }
+.tui_dialog_content,
+.tui_dialog_footer,
+.tui_dialog_info,
+.tui_dialog_itxt {
+	-webkit-border-radius: 0 0 3px 3px;
+	-moz-border-radius: 0 0 3px 3px;
+	border-radius: 0 0 3px 3px;
+}
+.tui_dialog_info { position: relative; background: #f7f7f7; color: #808080; word-wrap: break-word; }
+.tui_dialog_info .tui_dialog_itxt { padding: 9px 13px 7px; line-height: 17px; }
+
+.td_iframe_panel .tui_dialog_content { overflow: hidden; }
+
+/* TUI.panel */
+.tudou_dialog { position: fixed; cursor: default; }
+.tudou_dialog .tui_dialog_content { overflow: hidden; _height: 150px; color: #404040; }
+.tudou_dialog .tui_dialog_footer { height: 63px; clear: both; }
+.tudou_dialog .tui_dialog_logo { width: 80px; height: 80px; margin: 5px 0 0 10px; _margin-left: 5px; float: left; }
+.tudou_dialog .tui_dialog_text { padding: 40px 0 10px; text-align: center; }
+.tudou_dialog .tui_dialog_button { height: 31px; padding: 17px 12px 15px 22px; text-align: center; }
+.tudou_dialog .tui_dialog_button a {
+	display: inline-block; width: 90px; height: 31px; margin-right: 10px; line-height: 31px; *line-height: 33px;
+	text-align: center; color: #fff; text-decoration: none; overflow: hidden; outline: none; background: #d10e44; border-radius: 2px;
+}
+/* .tudou_dialog .tui_dialog_button a.p_btn_0, */
+.tudou_dialog .tui_dialog_button a:hover { background-color:#840025; }
+.tudou_dialog .tui_dialog_button a:active {  background-color:#b5b5b5; }
+.tudou_dialog .tui_dialog_button .p_btn_l a { width: 120px; background-position: -90px -70px; }
+.tudou_dialog .tui_dialog_button .p_btn_l a:hover { background-position: -90px -105px; }
+.tudou_dialog .tui_dialog_button .p_btn_l a:active { background-position: -90px -140px; }
+
+
+/* Mask */
+.tui_mask {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	background-color:#000;
+	filter:alpha(opacity=30);
+	opacity:0.3;
+}
