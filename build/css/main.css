@@ -1062,3 +1062,13 @@ body {
   height: 270px;
   overflow: hidden;
 }
+.error-page {
+  text-align: center;
+  padding: 180px 0;
+}
+.error-page h4 {
+  font-size: 30px;
+}
+.error-page a {
+  color: #6f9bc8;
+}

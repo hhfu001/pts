@@ -11,6 +11,8 @@ exports.map = [
 	['http://js.tudouui.com/v3/src', localRoot + '/src'],
 	['http://css.tudouui.com/v3/src', localRoot + '/src'],
 	['http://ui.tudou.com/v3/src', localRoot + '/src'],
+	// ['http://192.168.1.101/yushi/admin/skin/css/admin.css', localRoot + '/examples/admin.css'],
+	// ['http://192.168.1.101/yushi/admin/skin/js/g.js', localRoot + '/examples/g.js'],
 
 ];
 
