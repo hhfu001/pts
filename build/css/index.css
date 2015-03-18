@@ -1006,7 +1006,7 @@ a:hover {
   position: relative;
 }
 .magazine .c {
-  width: 1108px;
+  /*width: 1108px;*/
   margin: 0 auto;
   overflow: hidden;
 }
@@ -1014,6 +1014,7 @@ a:hover {
   width: 1000%;
 }
 .magazine li {
+  margin-right: 64px;
   float: left;
   width: 256px;
   text-align: center;

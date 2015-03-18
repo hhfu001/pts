@@ -57,14 +57,14 @@ require(['app/nav', 'module/slider', 'module/flexisel'], function(Nav, Slider, F
 		}
 	}
 
-	$('#magazineSlide').flexisel({
-		visibleItems: 4,
-		animationSpeed: 200,
-		autoPlay: false,
-		pauseOnHover: true,
-		enableResponsiveBreakpoints: false
+	// $('#magazineSlide').flexisel({
+	// 	visibleItems: 4,
+	// 	animationSpeed: 200,
+	// 	autoPlay: false,
+	// 	pauseOnHover: true,
+	// 	enableResponsiveBreakpoints: false
 
-	});
+	// });
 
 	$('#memberSlide').flexisel({
 		visibleItems: 5,
