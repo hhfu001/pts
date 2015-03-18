@@ -516,12 +516,6 @@ a:hover {
   line-height: 39px;
   font-size: 16px;
   color: #ccc;
-  -webkit-transition: all 0.3s;
-  -ms-transition: all 0.3s;
-  -moz-transition: all 0.3s;
-  -o-transition: all 0.3s;
-  transition: all 0.3s;
-  top: -50px;
 }
 .header .nav {
   display: inline-block;
@@ -788,7 +782,7 @@ a:hover {
   margin: 0 auto;
 }
 .content .about {
-  margin: 15px auto 35px;
+  margin: 15px auto 50px;
   position: relative;
   padding-top: 15px;
   height: 85px;
@@ -821,7 +815,7 @@ a:hover {
   transition: all 0.3s;
 }
 .box {
-  margin-bottom: 55px;
+  margin-bottom: 70px;
 }
 .box .title {
   border-top: 1px solid #ccc;
@@ -902,12 +896,15 @@ a:hover {
 .pattern {
   background: url("../img/bg_056ad03.png") 0 0 repeat;
 }
+.poster {
+  margin-top: 20px;
+}
 .poster li {
   float: left;
-  margin: 0 14px 15px;
-  padding: 15px;
-  width: 550px;
-  height: 230px;
+  margin: 0 14px 40px;
+  padding: 20px;
+  width: 540px;
+  height: 290px;
   overflow: hidden;
   background: #fff;
   box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
@@ -976,14 +973,17 @@ a:hover {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  line-height: 2;
 }
 .poster .txt {
-  height: 60px;
+  height: 76px;
   overflow: hidden;
+  line-height: 1.5;
+  font-size: 13px;
 }
 .poster .mo {
   text-align: right;
-  padding: 5px 0;
+  padding: 20px 0;
 }
 .poster .mo a {
   display: inline-block;

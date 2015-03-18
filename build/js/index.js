@@ -1139,7 +1139,7 @@ define("app/nav", [
 	function fixnav (op){
 		op = $.extend({
 			force: false, //强制fixed 默认根据body高度来定
-			top: 600, //距离顶部fixed 
+			top: 90, //距离顶部fixed 
 			disabled: true //禁用fixed（默认关闭伴随）
 		}, op);
 
@@ -1262,10 +1262,9 @@ require(['app/nav', 'module/slider', 'module/flexisel'], function(Nav, Slider, F
 		visibleItems: 5,
 		animationSpeed: 1000,
 		autoPlay: true,
-		autoPlaySpeed: 3000,
+		// autoPlaySpeed: 50,
 		pauseOnHover: true,
 		enableResponsiveBreakpoints: false
-
 	});
 
 
