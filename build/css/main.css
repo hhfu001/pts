@@ -865,9 +865,27 @@ body {
   margin: 0 50px 0 30px;
   height: 120px;
 }
+.p-mpic .p-list1 span {
+  width: 140px;
+  height: 90px;
+  overflow: hidden;
+}
+.p-mpic .p-list1 img {
+  max-height: 90px;
+  _height: 90px;
+}
 .p-mpic .p-list2 {
   float: left;
   height: 120px;
+}
+.p-mpic .p-list2 span {
+  width: 140px;
+  height: 90px;
+  overflow: hidden;
+}
+.p-mpic .p-list2 img {
+  max-height: 90px;
+  _height: 90px;
 }
 .p-mpic .p-list1 dt,
 .p-mpic .p-list2 dt,
