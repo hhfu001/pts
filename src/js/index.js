@@ -70,10 +70,9 @@ require(['app/nav', 'module/slider', 'module/flexisel'], function(Nav, Slider, F
 		visibleItems: 5,
 		animationSpeed: 1000,
 		autoPlay: true,
-		autoPlaySpeed: 3000,
+		// autoPlaySpeed: 50,
 		pauseOnHover: true,
 		enableResponsiveBreakpoints: false
-
 	});
 
 
