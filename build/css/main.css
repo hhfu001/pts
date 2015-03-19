@@ -1079,10 +1079,15 @@ body {
 .error-page {
   text-align: center;
   padding: 180px 0;
+  background: url(../img/error_c047826.gif) 50% 90px no-repeat;
 }
 .error-page h4 {
   font-size: 30px;
+  line-height: 1.5;
 }
 .error-page a {
   color: #6f9bc8;
+}
+.marking-page {
+  background: url(../img/making_e107045.gif) 50% 90px no-repeat;
 }
