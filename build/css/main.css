@@ -951,6 +951,13 @@ body {
 .p-mtxt .t-list .type {
   width: 120px;
 }
+.p-mtxt .t-list .h {
+  background: #deeaf6;
+  color: #2e2e38;
+}
+.min-height {
+  height: 200px;
+}
 .search-box {
   position: relative;
   height: 60px;
