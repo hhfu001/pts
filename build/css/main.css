@@ -1098,3 +1098,98 @@ body {
 .marking-page {
   background: url(../img/making_e107045.gif) 50% 90px no-repeat;
 }
+.albumcover {
+  height: 600px;
+  background: url(../img/cover_45cf49b.jpg) 50% 0 no-repeat;
+  overflow: hidden;
+}
+.albumcover .link {
+  position: absolute;
+  left: -20px;
+  top: 150px;
+  height: 68px;
+  width: 236px;
+  background: url(../img/btn_c21c3a8.png) 0 0 no-repeat;
+  overflow: hidden;
+  text-indent: -999px;
+  -webkit-transition: all 0.3s;
+  -ms-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  -o-transition: all 0.3s;
+  transition: all 0.3s;
+  filter: alpha(opacity= 80 );
+  -moz-opacity: 0.8;
+  -webkit-opacity: 0.8;
+  -o-opacity: 0.8;
+  opacity: 0.8;
+}
+.albumcover .link:hover {
+  filter: alpha(opacity= 100 );
+  -moz-opacity: 1;
+  -webkit-opacity: 1;
+  -o-opacity: 1;
+  opacity: 1;
+  left: 0;
+}
+.albumcover .link-2 {
+  top: 230px;
+  background-position: 0 -77px;
+}
+.albumcover .link-3 {
+  top: 310px;
+  background-position: 0 -154px;
+}
+.album-show {
+  position: relative;
+}
+.album-show .prev,
+.album-show .next {
+  position: absolute;
+  top: 250px;
+  width: 45px;
+  height: 70px;
+  background: #ffffff url("../img/icons_3335e0b.png") -47px -52px no-repeat;
+  cursor: pointer;
+  right: 20px;
+  filter: alpha(opacity= 80 );
+  -moz-opacity: 0.8;
+  -webkit-opacity: 0.8;
+  -o-opacity: 0.8;
+  opacity: 0.8;
+  -webkit-transition: all 0.3s;
+  -ms-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  -o-transition: all 0.3s;
+  transition: all 0.3s;
+}
+.album-show .prev {
+  left: 20px;
+  background-position: 10px -52px;
+}
+.album-show .prev:hover,
+.album-show .next:hover {
+  filter: alpha(opacity= 100 );
+  -moz-opacity: 1;
+  -webkit-opacity: 1;
+  -o-opacity: 1;
+  opacity: 1;
+}
+.album-show .slide {
+  width: 300%;
+}
+.show-box {
+  height: 600px;
+  overflow: hidden;
+  position: relative;
+}
+.show-box li {
+  float: left;
+  width: 1216px;
+  height: 600px;
+  text-align: center;
+}
+.show-box img {
+  width: 1216px;
+  height: 600px;
+  margin: 0 auto;
+}
