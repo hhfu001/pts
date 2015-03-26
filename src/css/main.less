@@ -92,8 +92,8 @@
 }
 
 .s-detail{
-	background: #fff; color: #707070;
-	.buy{ padding: 20px;}
+	color: #707070;
+	.buy{ padding: 20px; background: #fff;}
 	.tr{
 		line-height: 2;
 		em{ font-size: 14px;}
@@ -111,7 +111,7 @@
 			-o-transition: all 1s;	/* Opera */
 	}
 
-	.statistics{ padding:18px 20px; border-top: 1px solid #eee;
+	.statistics{ padding:18px 20px; border-top: 1px solid #eee; background: #fff;
 		.p{ position: relative; line-height: 2;}
 		.t{ position: absolute; right: 0; top: 0;}
 	}
@@ -135,7 +135,7 @@
 		}
 		.btn-favor:active{ background: #b5b5b5;}
 		.btn-favor:active i{ background-position: -24px -159px;}
-		.btn-buy{ float: right; display: inline; width: 110px; background: @bgred; color: #fff; font-size: 18px; border-color: @bgred; cursor: pointer;}
+		.btn-buy{ float: right; display: inline; width: 110px; background: @bgred; color: #fff; font-size: 18px; border-color: @bgred; cursor: pointer; text-align: center;}
 		.btn-buy:hover{ background: #840025; border-color: #840025;}
 		.btn-buy:active{ background: #b5b5b5; border-color: #b5b5b5;}
 		.favored .f1{ display: none;}
@@ -165,6 +165,11 @@
 	}
 }
 
+.repay-box{ margin: 20px auto; background: #fff;
+	h3{ padding: 10px; }
+	.price{font-size: 18px; color: @black; border-left: 2px solid @bgred;}
+	.num{ float: right; font-size: 12px; color: @gray;}
+}
 
 
 
