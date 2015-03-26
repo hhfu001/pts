@@ -10,8 +10,8 @@ require(['app/nav', 'app/share', 'module/switchtab'], function(Nav, Share, Switc
 	var newTab = new Switchtab({
 		box : $albumShow,
 		panel : 'li',
-		slide: true
-		// loop: 3000
+		slide: true,
+		loop: 300000
 	});	
 	
 	// newTab.bind('before', function(prev, cur) {
@@ -29,7 +29,8 @@ require(['app/nav', 'app/share', 'module/switchtab'], function(Nav, Share, Switc
 		var prev = newTab.current;
 							
 		if (prev > newTab.size) {
-			newTab.go(0);
+			// newTab.go(0);
+			alert('最后一张了！')
 		} else {
 			newTab.next(true);
 		}			
@@ -38,7 +39,8 @@ require(['app/nav', 'app/share', 'module/switchtab'], function(Nav, Share, Switc
 		var prev = newTab.current;
 							
 		if (prev < 1) {
-			newTab.go(newTab.size - 1);
+			alert('前面没有了！')
+			// newTab.go(newTab.size - 1);
 		} else {
 			newTab.prev(true);
 		}				
