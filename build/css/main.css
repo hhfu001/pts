@@ -956,7 +956,7 @@ body {
   color: #2e2e38;
 }
 .min-height {
-  height: 200px;
+  min-height: 350px;
 }
 .search-box {
   position: relative;
