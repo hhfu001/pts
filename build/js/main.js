@@ -1196,7 +1196,7 @@ define("app/nav", [
 
 require(['app/nav', 'app/share', 'module/switchtab'], function(Nav, Share, Switchtab) {
 	Nav.init({
-		disabled: true
+		disabled: false
 	});
 
 
