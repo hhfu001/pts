@@ -502,7 +502,7 @@ a:hover {
   position: relative;
 }
 .header .logo {
-  background: url("../img/icons_3335e0b.png") 0 0 no-repeat;
+  background: url("../img/icons_19f5d2d.png") 0 0 no-repeat;
   display: inline-block;
   width: 210px;
   margin-top: 18px;
@@ -550,7 +550,7 @@ a:hover {
   position: relative;
   display: inline-block;
   margin: 0 10px;
-  background: url("../img/icons_3335e0b.png") 0 -388px no-repeat;
+  background: url("../img/icons_19f5d2d.png") 0 -388px no-repeat;
   width: 42px;
   height: 40px;
 }
@@ -564,7 +564,7 @@ a:hover {
   right: -20px;
   width: 125px;
   height: 125px;
-  background: #ffffff url("../img/icons_3335e0b.png") 5px -500px no-repeat;
+  background: #ffffff url("../img/icons_19f5d2d.png") 5px -500px no-repeat;
   box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
 }
 .header .fixed {
@@ -605,7 +605,7 @@ a:hover {
 .bottom .logo {
   width: 100px;
   height: 50px;
-  background: url("../img/icons_3335e0b.png") 0 -445px no-repeat;
+  background: url("../img/icons_19f5d2d.png") 0 -445px no-repeat;
 }
 .bottom .links {
   overflow: hidden;
@@ -626,7 +626,7 @@ a:hover {
   width: 21px;
   height: 15px;
   vertical-align: middle;
-  background: url("../img/icons_3335e0b.png") -244px -67px no-repeat;
+  background: url("../img/icons_19f5d2d.png") -244px -67px no-repeat;
 }
 body {
   background: #f5f5f5;
@@ -1087,8 +1087,8 @@ body {
 }
 .error-page {
   text-align: center;
-  padding: 180px 0;
-  background: url(../img/error_c047826.gif) 50% 90px no-repeat;
+  padding: 250px 0;
+  background: url(../img/error_c047826.gif) 50% 120px no-repeat;
 }
 .error-page h4 {
   font-size: 30px;
@@ -1098,7 +1098,7 @@ body {
   color: #6f9bc8;
 }
 .marking-page {
-  background: url(../img/making_e107045.gif) 50% 90px no-repeat;
+  background: url(../img/making_e107045.gif) 50% 120px no-repeat;
 }
 .albumcover {
   height: 600px;
@@ -1150,7 +1150,7 @@ body {
   top: 250px;
   width: 45px;
   height: 70px;
-  background: #ffffff url("../img/icons_3335e0b.png") -47px -52px no-repeat;
+  background: #ffffff url("../img/icons_19f5d2d.png") -47px -52px no-repeat;
   cursor: pointer;
   right: 20px;
   filter: alpha(opacity= 80 );
@@ -1296,4 +1296,50 @@ body {
   width: 165px;
   height: 225px;
   margin: 0 auto;
+}
+.page-post {
+  background: #e7e7e7;
+  padding-bottom: 50px;
+  position: relative;
+}
+.page-post .sec-1 {
+  position: relative;
+  height: 759px;
+  background: url(../img/sec-1_bd8460b.jpg) 50% 0 no-repeat;
+}
+.page-post .sec-2 {
+  height: 1456px;
+  background: url(../img/sec-2_b329323.jpg) 50% 0 no-repeat;
+}
+.page-post .sec-3 {
+  height: 1033px;
+  background: url(../img/sec-3_2545e0d.jpg) 50% 0 no-repeat;
+}
+.page-post .sec-4 {
+  height: 1749px;
+  background: url(../img/sec-4_a5eaaaf.jpg) 50% 0 no-repeat;
+}
+.page-post .go {
+  position: absolute;
+  width: 171px;
+  height: 35px;
+  bottom: 23px;
+}
+.page-post .go-2 {
+  left: 133px;
+}
+.page-post .go-3 {
+  left: 546px;
+}
+.page-post .go-4 {
+  left: 949px;
+}
+.page-post .gotop {
+  display: none;
+  position: fixed;
+  right: 0;
+  bottom: 100px;
+  height: 40px;
+  width: 50px;
+  background: url("../img/icons_19f5d2d.png") -147px -505px no-repeat;
 }
