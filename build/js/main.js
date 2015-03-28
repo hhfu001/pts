@@ -1207,13 +1207,13 @@ require(['app/nav', 'app/share', 'module/switchtab'], function(Nav, Share, Switc
 		box : $albumShow,
 		panel : 'li',
 		slide: true,
-		loop: 300000
+		loop: 600000
 	});	
+	loadImg(0);
+	newTab.bind('before', function(prev, cur) {
+		loadImg(cur);
+	});
 	
-	// newTab.bind('before', function(prev, cur) {
-	// 	loadImg(me, cur);
-	// 	cb && cb(prev, cur, newTab.size);
-	// });
 	$albumShow.bind('mouseenter', function(){
 		newTab.stop();
 	}).bind('mouseleave', function(){
@@ -1223,24 +1223,36 @@ require(['app/nav', 'app/share', 'module/switchtab'], function(Nav, Share, Switc
 	$albumShow.delegate('.next', 'click', function(e){
 		e.preventDefault();
 		var prev = newTab.current;
-							
+
 		if (prev > newTab.size) {
-			// newTab.go(0);
-			alert('最后一张了！')
+			alert('这已经是第一页了！')
 		} else {
 			newTab.next(true);
 		}			
 	}).delegate('.prev', 'click', function(e){
 		e.preventDefault();
 		var prev = newTab.current;
-							
+		
 		if (prev < 1) {
-			alert('前面没有了！')
-			// newTab.go(newTab.size - 1);
+			alert('这已经是最后一页了！')
 		} else {
 			newTab.prev(true);
 		}				
 	});
+
+	function loadImg(index){
+
+		var img = newTab.panel.eq(index).find('img');
+		var src = img.attr('lazyImg');
+
+		if(img.length && src){
+			img.attr('src', src);
+			img.removeAttr('lazyImg');
+		}
+
+	}
+
+
 
 });
 
