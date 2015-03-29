@@ -57,17 +57,16 @@ require(['app/nav', 'app/share', 'module/switchtab'], function(Nav, Share, Switc
 	}
 
 	var hList = [270, 909, 2365, 3398];
-	var $body = $('body');
+	var $body = $(document.body);
 	$('.page-post').on('click', '.go', function(e){
-		e.preventDefault();
+		// e.preventDefault();
 
 		var me = $(this);
 		var sec =  hList[ me.attr('link')];
 
 		if(!sec) return;
-
 		$body.animate({
-			scrollTop: sec
+			scrollTop: sec + 'px'
 		}, 500);
 	});
 

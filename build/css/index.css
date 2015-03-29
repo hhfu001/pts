@@ -1023,7 +1023,7 @@ a:hover {
 }
 .magazine .cover {
   width: 256px;
-  height: 267px;
+  height: 351px;
   margin-bottom: 15px;
   box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
   -webkit-transition: all 1s;
@@ -1094,7 +1094,7 @@ a:hover {
   overflow: hidden;
 }
 .member .slide {
-  width: 1000%;
+  width: 9999%;
 }
 .member li {
   float: left;
@@ -1110,6 +1110,8 @@ a:hover {
 }
 .member .cover {
   vertical-align: middle;
+  height: 60px;
+  max-width: 170px;
 }
 .member .nbs-flexisel-nav-left,
 .member .nbs-flexisel-nav-right {
