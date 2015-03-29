@@ -502,7 +502,7 @@ a:hover {
   position: relative;
 }
 .header .logo {
-  background: url("../img/icons_19f5d2d.png") 0 0 no-repeat;
+  background: url("../img/icons_b0b116e.png") 0 0 no-repeat;
   display: inline-block;
   width: 210px;
   margin-top: 18px;
@@ -550,7 +550,7 @@ a:hover {
   position: relative;
   display: inline-block;
   margin: 0 10px;
-  background: url("../img/icons_19f5d2d.png") 0 -388px no-repeat;
+  background: url("../img/icons_b0b116e.png") 0 -388px no-repeat;
   width: 42px;
   height: 40px;
 }
@@ -564,7 +564,7 @@ a:hover {
   right: -20px;
   width: 125px;
   height: 125px;
-  background: #ffffff url("../img/icons_19f5d2d.png") 5px -500px no-repeat;
+  background: #ffffff url("../img/icons_b0b116e.png") 5px -500px no-repeat;
   box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
 }
 .header .fixed {
@@ -605,7 +605,7 @@ a:hover {
 .bottom .logo {
   width: 100px;
   height: 50px;
-  background: url("../img/icons_19f5d2d.png") 0 -445px no-repeat;
+  background: url("../img/icons_b0b116e.png") 0 -445px no-repeat;
 }
 .bottom .links {
   overflow: hidden;
@@ -626,7 +626,7 @@ a:hover {
   width: 21px;
   height: 15px;
   vertical-align: middle;
-  background: url("../img/icons_19f5d2d.png") -244px -67px no-repeat;
+  background: url("../img/icons_b0b116e.png") -244px -67px no-repeat;
 }
 .yi-reader {
   height: 600px;
@@ -753,7 +753,7 @@ a:hover {
   height: 51px;
   position: absolute;
   top: -300px;
-  background: url("../img/icons_19f5d2d.png") -147px -389px no-repeat;
+  background: url("../img/icons_b0b116e.png") -147px -389px no-repeat;
   -webkit-transition: all 0.3s;
   -ms-transition: all 0.3s;
   -moz-transition: all 0.3s;
@@ -845,7 +845,7 @@ a:hover {
   display: inline-block;
   width: 132px;
   height: 125px;
-  background: url("../img/icons_19f5d2d.png") 0 -120px no-repeat;
+  background: url("../img/icons_b0b116e.png") 0 -120px no-repeat;
 }
 .zhitongche .icon-1 {
   background-position: 0 -251px;
@@ -962,7 +962,7 @@ a:hover {
   display: inline-block;
   width: 30px;
   height: 22px;
-  background: url("../img/icons_19f5d2d.png") -125px -66px no-repeat;
+  background: url("../img/icons_b0b116e.png") -125px -66px no-repeat;
 }
 .poster .extra .icon2 {
   background-position: -181px -66px;
@@ -1073,7 +1073,7 @@ a:hover {
   top: 138px;
   width: 22px;
   height: 40px;
-  background: url("../img/icons_19f5d2d.png") 0 -66px no-repeat;
+  background: url("../img/icons_b0b116e.png") 0 -66px no-repeat;
   cursor: pointer;
 }
 .magazine .nbs-flexisel-nav-left {
@@ -1121,7 +1121,7 @@ a:hover {
   top: 50px;
   width: 22px;
   height: 40px;
-  background: url("../img/icons_19f5d2d.png") 0 -66px no-repeat;
+  background: url("../img/icons_b0b116e.png") 0 -66px no-repeat;
   cursor: pointer;
 }
 .member .nbs-flexisel-nav-left {

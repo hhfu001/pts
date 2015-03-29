@@ -502,7 +502,7 @@ a:hover {
   position: relative;
 }
 .header .logo {
-  background: url("../img/icons_19f5d2d.png") 0 0 no-repeat;
+  background: url("../img/icons_b0b116e.png") 0 0 no-repeat;
   display: inline-block;
   width: 210px;
   margin-top: 18px;
@@ -550,7 +550,7 @@ a:hover {
   position: relative;
   display: inline-block;
   margin: 0 10px;
-  background: url("../img/icons_19f5d2d.png") 0 -388px no-repeat;
+  background: url("../img/icons_b0b116e.png") 0 -388px no-repeat;
   width: 42px;
   height: 40px;
 }
@@ -564,7 +564,7 @@ a:hover {
   right: -20px;
   width: 125px;
   height: 125px;
-  background: #ffffff url("../img/icons_19f5d2d.png") 5px -500px no-repeat;
+  background: #ffffff url("../img/icons_b0b116e.png") 5px -500px no-repeat;
   box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
 }
 .header .fixed {
@@ -605,7 +605,7 @@ a:hover {
 .bottom .logo {
   width: 100px;
   height: 50px;
-  background: url("../img/icons_19f5d2d.png") 0 -445px no-repeat;
+  background: url("../img/icons_b0b116e.png") 0 -445px no-repeat;
 }
 .bottom .links {
   overflow: hidden;
@@ -626,7 +626,7 @@ a:hover {
   width: 21px;
   height: 15px;
   vertical-align: middle;
-  background: url("../img/icons_19f5d2d.png") -244px -67px no-repeat;
+  background: url("../img/icons_b0b116e.png") -244px -67px no-repeat;
 }
 body {
   background: #f5f5f5;
@@ -1153,7 +1153,7 @@ body {
   top: 390px;
   width: 45px;
   height: 70px;
-  background: #ffffff url("../img/icons_19f5d2d.png") -47px -52px no-repeat;
+  background: #ffffff url("../img/icons_b0b116e.png") -47px -52px no-repeat;
   cursor: pointer;
   right: 20px;
   filter: alpha(opacity= 80 );
@@ -1349,7 +1349,7 @@ body {
   bottom: 100px;
   height: 40px;
   width: 50px;
-  background: url("../img/icons_19f5d2d.png") -147px -505px no-repeat;
+  background: url("../img/icons_b0b116e.png") -147px -505px no-repeat;
 }
 .custom-1 {
   padding-left: 31px;
