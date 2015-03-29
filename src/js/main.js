@@ -57,7 +57,7 @@ require(['app/nav', 'app/share', 'module/switchtab'], function(Nav, Share, Switc
 	}
 
 	var hList = [270, 909, 2365, 3398];
-	var $body = $(document.body);
+	var $win = $(window);
 	$('.page-post').on('click', '.go', function(e){
 		// e.preventDefault();
 
@@ -65,13 +65,13 @@ require(['app/nav', 'app/share', 'module/switchtab'], function(Nav, Share, Switc
 		var sec =  hList[ me.attr('link')];
 
 		if(!sec) return;
-		$body.animate({
-			scrollTop: sec + 'px'
+		$win.animate({
+			scrollTop: sec
 		}, 500);
 	});
 
-	$(window).on('scroll', function(){
-		var top = $body.scrollTop();
+	$win.on('scroll', function(){
+		var top = $win.scrollTop();
 
 		$('.gotop')[top> 900 ? 'show' : 'hide']();
 

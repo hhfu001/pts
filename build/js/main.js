@@ -1142,7 +1142,7 @@ define("app/nav", [
 	// 跟随导航;
 	function fixnav (op){
 		op = $.extend({
-			force: false, //强制fixed 默认根据body高度来定
+			// force: false, //强制fixed 默认根据body高度来定
 			top: 90, //距离顶部fixed 
 			disabled: true //禁用fixed（默认关闭伴随）
 		}, op);
@@ -1153,9 +1153,7 @@ define("app/nav", [
 		var barStatus = 0;
 		var top = op.top;
 
-
-		//较少内容
-		if(op.disabled || !op.force){
+		if(op.disabled){
 			return;
 		}
 
@@ -1253,7 +1251,7 @@ require(['app/nav', 'app/share', 'module/switchtab'], function(Nav, Share, Switc
 	}
 
 	var hList = [270, 909, 2365, 3398];
-	var $body = $(document.body);
+	var $win = $(window);
 	$('.page-post').on('click', '.go', function(e){
 		// e.preventDefault();
 
@@ -1261,13 +1259,13 @@ require(['app/nav', 'app/share', 'module/switchtab'], function(Nav, Share, Switc
 		var sec =  hList[ me.attr('link')];
 
 		if(!sec) return;
-		$body.animate({
-			scrollTop: sec + 'px'
+		$win.animate({
+			scrollTop: sec
 		}, 500);
 	});
 
-	$(window).on('scroll', function(){
-		var top = $body.scrollTop();
+	$win.on('scroll', function(){
+		var top = $win.scrollTop();
 
 		$('.gotop')[top> 900 ? 'show' : 'hide']();
 

@@ -1138,7 +1138,7 @@ define("app/nav", [
 	// 跟随导航;
 	function fixnav (op){
 		op = $.extend({
-			force: false, //强制fixed 默认根据body高度来定
+			// force: false, //强制fixed 默认根据body高度来定
 			top: 90, //距离顶部fixed 
 			disabled: true //禁用fixed（默认关闭伴随）
 		}, op);
@@ -1149,9 +1149,7 @@ define("app/nav", [
 		var barStatus = 0;
 		var top = op.top;
 
-
-		//较少内容
-		if(op.disabled || !op.force){
+		if(op.disabled){
 			return;
 		}
 

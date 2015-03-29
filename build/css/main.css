@@ -1147,7 +1147,7 @@ body {
 .album-show .prev,
 .album-show .next {
   position: absolute;
-  top: 250px;
+  top: 390px;
   width: 45px;
   height: 70px;
   background: #ffffff url("../img/icons_19f5d2d.png") -47px -52px no-repeat;
@@ -1180,19 +1180,19 @@ body {
   width: 300%;
 }
 .show-box {
-  height: 600px;
+  height: 860px;
   overflow: hidden;
   position: relative;
 }
 .show-box li {
   float: left;
   width: 1216px;
-  height: 600px;
+  height: 860px;
   text-align: center;
 }
 .show-box img {
   width: 1216px;
-  height: 600px;
+  height: 860px;
   margin: 0 auto;
 }
 .association .menu {
