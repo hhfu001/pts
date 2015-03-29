@@ -977,9 +977,9 @@ a:hover {
   line-height: 2;
 }
 .poster .txt {
-  height: 76px;
+  height: 85px;
   overflow: hidden;
-  line-height: 1.5;
+  line-height: 1.7;
   font-size: 13px;
 }
 .poster .mo {
@@ -1039,6 +1039,7 @@ a:hover {
   transform: scale(1.04);
 }
 .magazine h4 {
+  margin-bottom: 7px;
   font-size: 24px;
   font-weight: 700;
   color: #2e2e38;
@@ -1053,6 +1054,7 @@ a:hover {
   font-size: 14px;
   padding: 0 8px;
   font-weight: 400;
+  margin-left: 10px;
   line-height: 20px;
   display: inline-block;
   vertical-align: middle;

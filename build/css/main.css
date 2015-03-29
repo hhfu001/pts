@@ -1227,15 +1227,16 @@ body {
   font-size: 9px;
   color: #898989;
 }
+.association .menu .current i,
+.association .menu .current span,
 .association .menu .current a {
-  background: #eee;
+  color: #6f9bc8;
 }
 .association .menu h3 {
   padding: 10px 15px;
   font-size: 16px;
   font-weight: bold;
-  color: #fff;
-  background: #2e2e38;
+  color: #2e2e38;
 }
 .association .detail {
   overflow: hidden;
@@ -1246,12 +1247,15 @@ body {
   text-indent: 25px;
   margin-bottom: 10px;
 }
+.banner {
+  margin-bottom: 15px;
+}
 .page-qikan .main {
   width: 900px;
   overflow: hidden;
 }
 .page-qikan .side {
-  width: 200px;
+  width: 240px;
   float: right;
   font-size: 14px;
   line-height: 2;
@@ -1342,4 +1346,8 @@ body {
   height: 40px;
   width: 50px;
   background: url("../img/icons_19f5d2d.png") -147px -505px no-repeat;
+}
+.custom-1 {
+  padding-left: 31px;
+  padding-right: 107px;
 }
