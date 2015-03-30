@@ -67,7 +67,7 @@ require(['app/nav', 'module/slider', 'module/flexisel'], function(Nav, Slider, F
 	// });
 
 	$('#memberSlide').flexisel({
-		visibleItems: 5,
+		visibleItems: 6,
 		animationSpeed: 1000,
 		autoPlay: true,
 		// autoPlaySpeed: 50,

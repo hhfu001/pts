@@ -16,7 +16,7 @@
 .slider{
 	position: relative; height: 460px; width: 1216px; margin: 0 auto; text-align: center; overflow: hidden;
 	.pics{ position: relative; height: 460px; width: 1216px; margin: 0 auto; overflow: hidden;
-		li{ display: none; position: absolute; top:0; margin: 0 auto; width: 100%; height: 460px;}
+		li{ display: none; position: absolute; top:0; left: 0; margin: 0 auto; width: 100%; height: 460px;}
 	}
 	img{ height: 460px; width: 1216px; margin: 0 auto; .ease(all, 4s);}
 	li:hover img{.scale(1.05);}
@@ -114,18 +114,51 @@
 }
 
 .member{ position: relative;
-	.c{ width: 1110px; margin: 0 auto; overflow: hidden;}
+	.c{ width: 1216px; margin: 0 auto; overflow: hidden;}
 	.slide{ width: 9999%;}
 	li{ float: left; width: 185px; height: 100px; line-height: 100px; text-align: center; overflow: hidden;}
 	li a{ display: inline-block; vertical-align: middle;}
-	.cover{ vertical-align: middle; height: 60px; max-width: 170px;}
-	.nbs-flexisel-nav-left,.nbs-flexisel-nav-right{ position: absolute; top:50px; width: 22px; height: 40px; background: @icons 0 -66px no-repeat; cursor: pointer;}
+	.cover{ vertical-align: middle; height: 45px; max-width: 150px;}
+	.nbs-flexisel-nav-left,.nbs-flexisel-nav-right{ position: absolute; top:30px; width: 22px; height: 40px; background: @icons 0 -66px no-repeat; cursor: pointer;}
 	.nbs-flexisel-nav-left{ left: 0;}
 	.nbs-flexisel-nav-right{ right: 0; background-position: -57px -66px;}
-	.nbs-flexisel-container{ width: 1110px; overflow: hidden;} 
+	.nbs-flexisel-container{ width: 1216px; overflow: hidden;} 
 
 }
 .nbs-flexisel-ul{ position: relative;}
+
+
+.nbs-flexisel-container {
+    position:relative;
+    max-width:100%;
+}
+.nbs-flexisel-ul {
+    position:relative;
+    width:999999px;
+    margin:0px;
+    padding:0px;
+    list-style-type:none;   
+    text-align:center;  
+}
+
+.nbs-flexisel-inner {
+    overflow:hidden;
+    float:left;
+    width:100%;
+    border-radius:5px;
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;  
+}
+
+.nbs-flexisel-item {
+    float:left;
+    margin:0px;
+    padding:0px;
+    cursor:pointer;
+    position:relative;
+    line-height:0px;
+}
+
 
 
 
