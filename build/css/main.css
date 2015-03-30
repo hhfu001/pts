@@ -1739,6 +1739,9 @@ input::-ms-clear {
   display: inline-block;
   padding-left: 15px;
 }
+.repay-box h3 i {
+  color: #d10e44;
+}
 .repay-box .num {
   float: right;
   font-size: 12px;
@@ -1746,7 +1749,6 @@ input::-ms-clear {
 }
 .repay-box .c {
   padding: 15px;
-  font-size: 13px;
 }
 .repay-box .c p {
   margin-bottom: 10px;
