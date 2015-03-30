@@ -2200,7 +2200,7 @@ input::-ms-clear {
 }
 .item-address .row2 {
   padding: 15px 0 0 80px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid #db6485;
 }
 .item-address .selects {
   line-height: 20px;
@@ -2256,8 +2256,11 @@ input::-ms-clear {
 .item-address-list .row2 {
   text-align: right;
 }
-.item-address-list .row2 a:hover {
+.item-address-list .row2 a {
   color: #d10e44;
+}
+.item-address-list .row2 a:hover {
+  color: #db6485;
 }
 .address_dialog .tui_dialog_holder {
   width: 400px;
