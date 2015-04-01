@@ -503,7 +503,7 @@ a:hover {
 }
 .header .logo {
   background: url("../img/icons_b0b116e.png") 0 0 no-repeat;
-  display: inline-block;
+  display: block;
   width: 210px;
   margin-top: 18px;
   height: 54px;
