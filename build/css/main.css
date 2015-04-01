@@ -503,10 +503,12 @@ a:hover {
 }
 .header .logo {
   background: url("../img/icons_b0b116e.png") 0 0 no-repeat;
-  display: block;
+  position: relative;
+  left: 0;
   width: 210px;
-  margin-top: 18px;
+  top: 18px;
   height: 54px;
+  display: block;
   overflow: hidden;
   text-indent: -999px;
 }
