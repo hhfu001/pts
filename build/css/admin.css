@@ -1349,7 +1349,7 @@ input::-ms-clear {
   display: block;
   height: 46px;
   line-height: 46px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px dashed #eee;
   font-size: 14px;
   padding-left: 55px;
 }
