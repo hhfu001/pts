@@ -2621,8 +2621,8 @@ define("m/login", [
 	// 	u_id: 123,
 	// 	u_name: 'test'
 	// });
-	
-	// Cookie('RELEASE_VERSION', 'latest', { domain: domain, path: '/', expires: 100});
+	// console.log('123123123');
+	// Cookie('RELEASE_VERSION', '2015_04_99', { domain: domain, path: '/', expires: 100});
 
 	var u_id = Cookie('u_id');
 	var u_name = Cookie('u_name');
@@ -3381,7 +3381,8 @@ define("m/pay", [
 			var me = $(item);
 			var numstep = new Numstep({node: item});
 			var price = me.find('.p1').attr('data-price');
-			var buyNum = me.find('.buynum').val();
+			var $num = me.find('.buynum');
+			var buyNum = $num.length? $num.val() : 1;
 			var $total = me.find('.total');
 
 			$total.text(Num.split( buyNum * price)).attr('data-total', buyNum * price);

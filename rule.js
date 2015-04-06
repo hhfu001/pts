@@ -3,7 +3,7 @@
 module.exports = [
   {
     pattern: 'http://include.jishachengta.com.cn/web',      // Match url you wanna replace
-    responder:  "/Users/hhfu/tudou/ju/build"
+    responder:  "/Users/hhfu/tudou/pts/build"
   }
 
 /*
