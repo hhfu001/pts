@@ -322,7 +322,7 @@ define([
 
 		Dialog.confirm('您确认要退出嘛？',function(){
 		
-			var isUsercenter = /usercenter/.test(location.pathname);
+			var isUsercenter = /ucenter/.test(location.pathname);
 
 			Model.getData({act : 8}, function(){
 
