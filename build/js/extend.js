@@ -2603,7 +2603,7 @@ define("m/login", [
 	var domain = 'jishachengta.com.cn';
 	var base_domain = window.base_domain || '';
 	var Login = new Event();
-	var navTpl = '欢迎访问集沙成塔 <a href="<%=domain%>/usercenter/" class="uname" target="_blank"><%=u_name%></a><a href="#" class="jsLogout">退出</a>\n|<a href="<%=domain%>/usercenter/order" target="_blank">支持的项目</a>';
+	var navTpl = '欢迎访问集沙成塔 <a href="<%=domain%>/ucenter/" class="uname" target="_blank"><%=u_name%></a><a href="#" class="jsLogout">退出</a>\n|<a href="<%=domain%>/ucenter/order" target="_blank">支持的项目</a>';
 	var navArt = Art.compile(navTpl);
 
 	var loginTpl = '<h3>登录</h3>\n<a href="#" class="close" data-role="close">X</a>\n<form id="loginForm">\n<div class="l"><input class="tel" type="text" pattern= "^1[3|5|8|7|4|6]\\d{9}" placeholder="手机号" required /><i class="icon"></i></div>\n<div class="l"><input class="pwd" type="password" pattern="^\\w{6,}" placeholder="密码" required /><i class="icon icon2"></i></div>\n<p class="p"><a href="<%=url%>" target="_blank">忘记密码了？</a></p>\n<div class="btn">\n<a class="submit" href="#">登 录</a>\n</div>\n</form>\n<div class="foot">\n没有账户？<a href="#" target="_blank" class="b goreg">注册账户</a>\n</div>';
@@ -2912,7 +2912,7 @@ define("m/login", [
 
 		Dialog.confirm('您确认要退出嘛？',function(){
 		
-			var isUsercenter = /usercenter/.test(location.pathname);
+			var isUsercenter = /ucenter/.test(location.pathname);
 
 			Model.getData({act : 8}, function(){
 

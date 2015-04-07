@@ -2099,15 +2099,15 @@ input::-ms-clear {
   background: #eee;
 }
 .page-account .money {
-  padding: 0 10px;
+  padding-right: 10px;
   color: #d10e44;
+  font-size: 18px;
 }
 .page-account .account {
   margin-bottom: 30px;
-  padding: 20px 10px;
-  width: 180px;
+  padding: 20px 0;
   background: #f5f5f5;
-  border: 1px solid #eee;
+  border: 1px solid #ddd;
 }
 .page-account .account h4 {
   font-size: 14px;
@@ -2119,6 +2119,13 @@ input::-ms-clear {
   padding: 0 10px;
   line-height: 2;
   border-radius: 2px;
+}
+.page-account .account .col {
+  float: left;
+  width: 30%;
+  padding-left: 30px;
+  border-left: 1px dashed #ddd;
+  margin-left: -1px;
 }
 .new-address {
   margin-bottom: 15px;
