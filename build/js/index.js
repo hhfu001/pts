@@ -1139,7 +1139,7 @@ define("app/nav", [
 	function fixnav (op){
 		op = $.extend({
 			// force: false, //强制fixed 默认根据body高度来定
-			top: 90, //距离顶部fixed 
+			top: 165, //距离顶部fixed 
 			disabled: true //禁用fixed（默认关闭伴随）
 		}, op);
 
@@ -1257,13 +1257,41 @@ require(['app/nav', 'module/slider', 'module/flexisel'], function(Nav, Slider, F
 	// });
 
 	$('#memberSlide').flexisel({
-		visibleItems: 6,
+		visibleItems: 7,
 		animationSpeed: 1000,
 		autoPlay: true,
 		// autoPlaySpeed: 50,
 		pauseOnHover: true,
 		enableResponsiveBreakpoints: false
 	});
+
+
+
+	var $adc = $('#indexAD .c');
+	var first;
+	$(window).on('scroll', function(){
+		var top = $(window).scrollTop();
+
+		if(top> 500 && !first){
+			$adc.addClass('ex');
+			$('#indexAD .btn').removeClass('expend');
+			first = true;
+		}
+	});
+
+	$('#indexAD').on('click', '.btn', function(e){
+		e.preventDefault();
+		var me = $(this);
+		if(me.hasClass('expend')){
+			me.removeClass('expend');
+			$adc.addClass('ex');
+		}else{
+			me.addClass('expend');
+			$adc.removeClass('ex');
+
+		}
+
+	})
 
 
 
