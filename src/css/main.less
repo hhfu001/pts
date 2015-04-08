@@ -225,6 +225,54 @@ body{ background: #f5f5f5;}
 .custom-1{padding-left: 31px;padding-right: 107px;}
 
 
+.page-guide{
+	height: 800px; position: relative; background: url(../img/3.png) 50% 0 no-repeat;
+	.gd{ position: absolute; width: 180px; height: 180px; border-radius: 100%; background: url(../img/q.png) 0 0 no-repeat;}
+	.gd-1{ left: 410px; top: 55px; width: 235px; height: 235px; .tossing2;}
+	.gd-2{ left: 54px; top: 237px; width: 235px; height: 235px;background-position: 0 -243px; .tossing2;}
+	.gd-3{ left: 360px; top: 327px; background-position: -262px 0;.tossing1;}
+	.gd-4{ left: 852px; top: 183px; background-position: -264px -243px; .tossing1;}
+}
 
+.tossing1{
+	animation: tossing 5s linear 0s infinite alternate;
+	/* Firefox: */
+	-moz-animation: tossing 5s linear 0s infinite alternate;
+	/* Safari 和 Chrome: */
+	-webkit-animation: tossing 5s linear 0s infinite alternate;
+	/* Opera: */
+	-o-animation: tossing 5s linear 0s infinite alternate;
+}
+.tossing2{
+	animation: tossing 4s linear 0s infinite alternate;
+	/* Firefox: */
+	-moz-animation: tossing 4s linear 0s infinite alternate;
+	/* Safari 和 Chrome: */
+	-webkit-animation: tossing 4s linear 0s infinite alternate;
+	/* Opera: */
+	-o-animation: tossing 4s linear 0s infinite alternate;
+}
+
+/* 弹出 */
+@-webkit-keyframes tossing{
+    0%{opacity:0.9; -webkit-transform: scale(0.95);}
+    50%{opacity:1; -webkit-transform: scale(1); }
+    100%{opacity:0.9; -webkit-transform: scale(0.95);}
+}
+@-moz-keyframes tossing{
+    0%{opacity:0.9; -moz-transform: scale(0.95);}
+    50%{opacity:1; -moz-transform:  scale(1); }
+    100%{opacity:0.9; -moz-transform: scale(0.95);}
+}
+@-ms-keyframes tossing{
+    0%{opacity:0.9; -ms-transform: scale(0.95);}
+    50%{opacity:1; -ms-transform:  scale(1); }
+    100%{opacity:0.9; -ms-transform: scale(0.95);}
+}
+@keyframes tossing{
+    0%{opacity:0.9; transform: scale(0.95);}
+    50%{opacity:1; transform:  scale(1); }
+    100%{opacity:0.9; transform: scale(0.95);}
+}
 
 

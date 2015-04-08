@@ -42,20 +42,25 @@ a:hover{ color: @yi; text-decoration: none;}
 .warp{ width: 1216px; margin: 0 auto;}
 
 .header{
-	position: relative; height: 129px; width: 100%;border-bottom: 1px solid #ddd; box-shadow: 0 3px 3px rgba(0,0,0,.1); z-index: 100;  background: #474747;
-	.sec{ height: 90px; position: relative; }
-	.logo{ background: @icons 0 0 no-repeat; position: relative; left: 0; width: 210px; top: 18px; height: 54px; display: block; overflow: hidden; text-indent: -999px;}
+	position: relative; height: 206px; width: 100%;border-bottom: 1px solid #ddd; box-shadow: 0 3px 3px rgba(0,0,0,.1); z-index: 100;
+	.sec-1{ height: 48px; position: relative; text-align: right; line-height: 48px;
+		.t{ border-left: 1px solid #898989; padding:0 7px;}
+	}
+	.sec{ height: 115px; position: relative; border-bottom: 3px solid #b1d283;}
+	.warp-bg{ background: #474747;}
+	.warp-bg2{ background: #fff;}
+	.logo{ background: @icons 0 -632px no-repeat; position: relative; left: 0; width: 520px; top: 18px; height: 68px; display: block; overflow: hidden; text-indent: -999px;}
 	.m-nav{ height: 39px; background: #fff; text-align: center; line-height: 39px; font-size: 16px; color: #ccc;}
 	.nav{ display: inline-block; width: 1216px;}
 	.nav li{ display: inline;}
 	.nav a{ display: inline-block; margin: 0 10px; .ease;}
 	.nav a:hover{ color: @yi;.scale;}
 	.share{
-		position: absolute; right: 10px; top:20px;
+		position: absolute; right: 220px; top: 0; *top: 13px;
 	}
-	.icon{  position: relative; display: inline-block; margin: 0 10px; background: @icons 0 -388px no-repeat; width: 42px; height: 40px;}
-	.icon-sina{ background-position: -53px -388px;}
-	.qrcode{ display: none; position: absolute; top: 42px; right: -20px; width: 125px; height: 125px; background:#fff @icons 5px -500px no-repeat;box-shadow: 0 3px 3px rgba(0,0,0,.1);}
+	.icon{  position: relative; display: inline-block; margin: 0 5px; background: @icons 0 -399px no-repeat; width: 22px; height: 23px; vertical-align: middle;}
+	.icon-sina{ background-position: -33px -399px;}
+	.qrcode{ display: none; position: absolute; top: 22px; right: -20px; width: 125px; height: 125px; background:#fff @icons 5px -500px no-repeat;box-shadow: 0 3px 3px rgba(0,0,0,.1);}
 	.fixed{ position: fixed; width: 100%; box-shadow: 0 3px 3px rgba(0,0,0,.1); top: 0; min-width: 1216px; _width:1216px; }
 }
 
@@ -76,4 +81,11 @@ a:hover{ color: @yi; text-decoration: none;}
 
 .gicon-v{ display: inline-block; width: 21px; height: 15px; vertical-align: middle; background: @icons -244px -67px no-repeat;}
 
+.g-banner{ height: 100px; overflow: hidden;}
+.banner-warp{ margin-top: 15px;}
+
+.banner-side{ height: 200px; overflow: hidden; width: 100%;}
+.banner-main{ width: 830px; margin: 15px 0;
+	.ad{ width: 25%; *width:206px; float: left; height: 100px; overflow: hidden;}
+}
 
