@@ -490,24 +490,40 @@ a:hover {
 }
 .header {
   position: relative;
-  height: 129px;
+  height: 206px;
   width: 100%;
   border-bottom: 1px solid #ddd;
   box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
   z-index: 100;
-  background: #474747;
+}
+.header .sec-1 {
+  height: 48px;
+  position: relative;
+  text-align: right;
+  line-height: 48px;
+}
+.header .sec-1 .t {
+  border-left: 1px solid #898989;
+  padding: 0 7px;
 }
 .header .sec {
-  height: 90px;
+  height: 115px;
   position: relative;
+  border-bottom: 3px solid #b1d283;
+}
+.header .warp-bg {
+  background: #222;
+}
+.header .warp-bg2 {
+  background: #fff;
 }
 .header .logo {
-  background: url("../img/icons_b0b116e.png") 0 0 no-repeat;
+  background: url("../img/icons_8ee373a.png") 0 -632px no-repeat;
   position: relative;
   left: 0;
-  width: 210px;
+  width: 520px;
   top: 18px;
-  height: 54px;
+  height: 68px;
   display: block;
   overflow: hidden;
   text-indent: -999px;
@@ -545,28 +561,30 @@ a:hover {
 }
 .header .share {
   position: absolute;
-  right: 10px;
-  top: 20px;
+  right: 220px;
+  top: 0;
+  *top: 13px;
 }
 .header .icon {
   position: relative;
   display: inline-block;
-  margin: 0 10px;
-  background: url("../img/icons_b0b116e.png") 0 -388px no-repeat;
-  width: 42px;
-  height: 40px;
+  margin: 0 5px;
+  background: url("../img/icons_8ee373a.png") 0 -399px no-repeat;
+  width: 22px;
+  height: 23px;
+  vertical-align: middle;
 }
 .header .icon-sina {
-  background-position: -53px -388px;
+  background-position: -33px -399px;
 }
 .header .qrcode {
   display: none;
   position: absolute;
-  top: 42px;
+  top: 22px;
   right: -20px;
   width: 125px;
   height: 125px;
-  background: #ffffff url("../img/icons_b0b116e.png") 5px -500px no-repeat;
+  background: #ffffff url("../img/icons_8ee373a.png") 5px -500px no-repeat;
   box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
 }
 .header .fixed {
@@ -607,7 +625,7 @@ a:hover {
 .bottom .logo {
   width: 100px;
   height: 50px;
-  background: url("../img/icons_b0b116e.png") 0 -445px no-repeat;
+  background: url("../img/icons_8ee373a.png") 0 -445px no-repeat;
 }
 .bottom .links {
   overflow: hidden;
@@ -628,7 +646,30 @@ a:hover {
   width: 21px;
   height: 15px;
   vertical-align: middle;
-  background: url("../img/icons_b0b116e.png") -244px -67px no-repeat;
+  background: url("../img/icons_8ee373a.png") -244px -67px no-repeat;
+}
+.g-banner {
+  height: 100px;
+  overflow: hidden;
+}
+.banner-warp {
+  margin-top: 15px;
+}
+.banner-side {
+  height: 200px;
+  overflow: hidden;
+  width: 100%;
+}
+.banner-main {
+  width: 830px;
+  margin: 15px 0;
+}
+.banner-main .ad {
+  width: 25%;
+  *width: 206px;
+  float: left;
+  height: 100px;
+  overflow: hidden;
 }
 .yi-reader {
   height: 600px;
@@ -757,7 +798,7 @@ a:hover {
   height: 51px;
   position: absolute;
   top: -300px;
-  background: url("../img/icons_b0b116e.png") -147px -389px no-repeat;
+  background: url("../img/icons_8ee373a.png") -147px -389px no-repeat;
   -webkit-transition: all 0.3s;
   -ms-transition: all 0.3s;
   -moz-transition: all 0.3s;
@@ -785,6 +826,7 @@ a:hover {
 }
 .content {
   margin: 0 auto;
+  position: relative;
 }
 .content .about {
   margin: 15px auto 50px;
@@ -849,7 +891,7 @@ a:hover {
   display: inline-block;
   width: 132px;
   height: 125px;
-  background: url("../img/icons_b0b116e.png") 0 -120px no-repeat;
+  background: url("../img/icons_8ee373a.png") 0 -120px no-repeat;
 }
 .zhitongche .icon-1 {
   background-position: 0 -251px;
@@ -966,7 +1008,7 @@ a:hover {
   display: inline-block;
   width: 30px;
   height: 22px;
-  background: url("../img/icons_b0b116e.png") -125px -66px no-repeat;
+  background: url("../img/icons_8ee373a.png") -125px -66px no-repeat;
 }
 .poster .extra .icon2 {
   background-position: -181px -66px;
@@ -1077,7 +1119,7 @@ a:hover {
   top: 138px;
   width: 22px;
   height: 40px;
-  background: url("../img/icons_b0b116e.png") 0 -66px no-repeat;
+  background: url("../img/icons_8ee373a.png") 0 -66px no-repeat;
   cursor: pointer;
 }
 .magazine .nbs-flexisel-nav-left {
@@ -1104,9 +1146,9 @@ a:hover {
 }
 .member li {
   float: left;
-  width: 185px;
-  height: 100px;
-  line-height: 100px;
+  width: 155px;
+  height: 50px;
+  line-height: 50px;
   text-align: center;
   overflow: hidden;
 }
@@ -1116,16 +1158,16 @@ a:hover {
 }
 .member .cover {
   vertical-align: middle;
-  height: 45px;
-  max-width: 150px;
+  height: 35px;
+  max-width: 130px;
 }
 .member .nbs-flexisel-nav-left,
 .member .nbs-flexisel-nav-right {
   position: absolute;
-  top: 30px;
+  top: 4px;
   width: 22px;
   height: 40px;
-  background: url("../img/icons_b0b116e.png") 0 -66px no-repeat;
+  background: url("../img/icons_8ee373a.png") 0 -66px no-repeat;
   cursor: pointer;
 }
 .member .nbs-flexisel-nav-left {
@@ -1169,4 +1211,55 @@ a:hover {
   cursor: pointer;
   position: relative;
   line-height: 0px;
+}
+.g-banner {
+  position: relative;
+  top: -70px;
+}
+.index-ad {
+  position: absolute;
+  top: 160px;
+  right: 0;
+  height: 360px;
+  border: 3px solid #000;
+  background: #fff;
+}
+.index-ad .c {
+  width: 0;
+  height: 360px;
+  overflow: hidden;
+  -webkit-transition: all 0.3s;
+  -ms-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  -o-transition: all 0.3s;
+  transition: all 0.3s;
+}
+.index-ad .btn {
+  position: absolute;
+  left: -20px;
+  top: 170px;
+  width: 20px;
+  height: 47px;
+  background: url("../img/icons_8ee373a.png") 0 0 no-repeat;
+}
+.index-ad .expend {
+  background-position: -34px 0;
+}
+.index-ad .ad {
+  float: left;
+  width: 137px;
+  height: 180px;
+  overflow: hidden;
+}
+.index-ad .ad img {
+  height: 180px;
+}
+.index-ad .ad-2 {
+  width: 236px;
+}
+.index-ad .ad-3 {
+  width: 99px;
+}
+.index-ad .ex {
+  width: 510px;
 }

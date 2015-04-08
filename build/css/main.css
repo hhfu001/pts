@@ -490,24 +490,40 @@ a:hover {
 }
 .header {
   position: relative;
-  height: 129px;
+  height: 206px;
   width: 100%;
   border-bottom: 1px solid #ddd;
   box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
   z-index: 100;
-  background: #474747;
+}
+.header .sec-1 {
+  height: 48px;
+  position: relative;
+  text-align: right;
+  line-height: 48px;
+}
+.header .sec-1 .t {
+  border-left: 1px solid #898989;
+  padding: 0 7px;
 }
 .header .sec {
-  height: 90px;
+  height: 115px;
   position: relative;
+  border-bottom: 3px solid #b1d283;
+}
+.header .warp-bg {
+  background: #222;
+}
+.header .warp-bg2 {
+  background: #fff;
 }
 .header .logo {
-  background: url("../img/icons_b0b116e.png") 0 0 no-repeat;
+  background: url("../img/icons_8ee373a.png") 0 -632px no-repeat;
   position: relative;
   left: 0;
-  width: 210px;
+  width: 520px;
   top: 18px;
-  height: 54px;
+  height: 68px;
   display: block;
   overflow: hidden;
   text-indent: -999px;
@@ -545,28 +561,30 @@ a:hover {
 }
 .header .share {
   position: absolute;
-  right: 10px;
-  top: 20px;
+  right: 220px;
+  top: 0;
+  *top: 13px;
 }
 .header .icon {
   position: relative;
   display: inline-block;
-  margin: 0 10px;
-  background: url("../img/icons_b0b116e.png") 0 -388px no-repeat;
-  width: 42px;
-  height: 40px;
+  margin: 0 5px;
+  background: url("../img/icons_8ee373a.png") 0 -399px no-repeat;
+  width: 22px;
+  height: 23px;
+  vertical-align: middle;
 }
 .header .icon-sina {
-  background-position: -53px -388px;
+  background-position: -33px -399px;
 }
 .header .qrcode {
   display: none;
   position: absolute;
-  top: 42px;
+  top: 22px;
   right: -20px;
   width: 125px;
   height: 125px;
-  background: #ffffff url("../img/icons_b0b116e.png") 5px -500px no-repeat;
+  background: #ffffff url("../img/icons_8ee373a.png") 5px -500px no-repeat;
   box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
 }
 .header .fixed {
@@ -607,7 +625,7 @@ a:hover {
 .bottom .logo {
   width: 100px;
   height: 50px;
-  background: url("../img/icons_b0b116e.png") 0 -445px no-repeat;
+  background: url("../img/icons_8ee373a.png") 0 -445px no-repeat;
 }
 .bottom .links {
   overflow: hidden;
@@ -628,7 +646,30 @@ a:hover {
   width: 21px;
   height: 15px;
   vertical-align: middle;
-  background: url("../img/icons_b0b116e.png") -244px -67px no-repeat;
+  background: url("../img/icons_8ee373a.png") -244px -67px no-repeat;
+}
+.g-banner {
+  height: 100px;
+  overflow: hidden;
+}
+.banner-warp {
+  margin-top: 15px;
+}
+.banner-side {
+  height: 200px;
+  overflow: hidden;
+  width: 100%;
+}
+.banner-main {
+  width: 830px;
+  margin: 15px 0;
+}
+.banner-main .ad {
+  width: 25%;
+  *width: 206px;
+  float: left;
+  height: 100px;
+  overflow: hidden;
 }
 body {
   background: #f5f5f5;
@@ -1155,7 +1196,7 @@ body {
   top: 390px;
   width: 45px;
   height: 70px;
-  background: #ffffff url("../img/icons_b0b116e.png") -47px -52px no-repeat;
+  background: #ffffff url("../img/icons_8ee373a.png") -47px -52px no-repeat;
   cursor: pointer;
   right: 20px;
   filter: alpha(opacity= 80 );
@@ -1351,9 +1392,165 @@ body {
   bottom: 100px;
   height: 40px;
   width: 50px;
-  background: url("../img/icons_b0b116e.png") -147px -505px no-repeat;
+  background: url("../img/icons_8ee373a.png") -147px -505px no-repeat;
 }
 .custom-1 {
   padding-left: 31px;
   padding-right: 107px;
+}
+.page-guide {
+  height: 800px;
+  position: relative;
+  background: url(../img/3_e9d044e.png) 50% 0 no-repeat;
+}
+.page-guide .gd {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  border-radius: 100%;
+  background: url(../img/q_364115c.png) 0 0 no-repeat;
+}
+.page-guide .gd-1 {
+  left: 410px;
+  top: 55px;
+  width: 235px;
+  height: 235px;
+  animation: tossing 4s linear 0s infinite alternate;
+  /* Firefox: */
+
+  -moz-animation: tossing 4s linear 0s infinite alternate;
+  /* Safari 和 Chrome: */
+
+  -webkit-animation: tossing 4s linear 0s infinite alternate;
+  /* Opera: */
+
+  -o-animation: tossing 4s linear 0s infinite alternate;
+}
+.page-guide .gd-2 {
+  left: 54px;
+  top: 237px;
+  width: 235px;
+  height: 235px;
+  background-position: 0 -243px;
+  animation: tossing 4s linear 0s infinite alternate;
+  /* Firefox: */
+
+  -moz-animation: tossing 4s linear 0s infinite alternate;
+  /* Safari 和 Chrome: */
+
+  -webkit-animation: tossing 4s linear 0s infinite alternate;
+  /* Opera: */
+
+  -o-animation: tossing 4s linear 0s infinite alternate;
+}
+.page-guide .gd-3 {
+  left: 360px;
+  top: 327px;
+  background-position: -262px 0;
+  animation: tossing 5s linear 0s infinite alternate;
+  /* Firefox: */
+
+  -moz-animation: tossing 5s linear 0s infinite alternate;
+  /* Safari 和 Chrome: */
+
+  -webkit-animation: tossing 5s linear 0s infinite alternate;
+  /* Opera: */
+
+  -o-animation: tossing 5s linear 0s infinite alternate;
+}
+.page-guide .gd-4 {
+  left: 852px;
+  top: 183px;
+  background-position: -264px -243px;
+  animation: tossing 5s linear 0s infinite alternate;
+  /* Firefox: */
+
+  -moz-animation: tossing 5s linear 0s infinite alternate;
+  /* Safari 和 Chrome: */
+
+  -webkit-animation: tossing 5s linear 0s infinite alternate;
+  /* Opera: */
+
+  -o-animation: tossing 5s linear 0s infinite alternate;
+}
+.tossing1 {
+  animation: tossing 5s linear 0s infinite alternate;
+  /* Firefox: */
+
+  -moz-animation: tossing 5s linear 0s infinite alternate;
+  /* Safari 和 Chrome: */
+
+  -webkit-animation: tossing 5s linear 0s infinite alternate;
+  /* Opera: */
+
+  -o-animation: tossing 5s linear 0s infinite alternate;
+}
+.tossing2 {
+  animation: tossing 4s linear 0s infinite alternate;
+  /* Firefox: */
+
+  -moz-animation: tossing 4s linear 0s infinite alternate;
+  /* Safari 和 Chrome: */
+
+  -webkit-animation: tossing 4s linear 0s infinite alternate;
+  /* Opera: */
+
+  -o-animation: tossing 4s linear 0s infinite alternate;
+}
+/* 弹出 */
+@-webkit-keyframes tossing {
+  0% {
+    opacity: 0.9;
+    -webkit-transform: scale(0.95);
+  }
+  50% {
+    opacity: 1;
+    -webkit-transform: scale(1);
+  }
+  100% {
+    opacity: 0.9;
+    -webkit-transform: scale(0.95);
+  }
+}
+@-moz-keyframes tossing {
+  0% {
+    opacity: 0.9;
+    -moz-transform: scale(0.95);
+  }
+  50% {
+    opacity: 1;
+    -moz-transform: scale(1);
+  }
+  100% {
+    opacity: 0.9;
+    -moz-transform: scale(0.95);
+  }
+}
+@-ms-keyframes tossing {
+  0% {
+    opacity: 0.9;
+    -ms-transform: scale(0.95);
+  }
+  50% {
+    opacity: 1;
+    -ms-transform: scale(1);
+  }
+  100% {
+    opacity: 0.9;
+    -ms-transform: scale(0.95);
+  }
+}
+@keyframes tossing {
+  0% {
+    opacity: 0.9;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0.9;
+    transform: scale(0.95);
+  }
 }
