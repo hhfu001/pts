@@ -14,8 +14,11 @@ require(['app/nav', 'app/share', 'module/switchtab'], function(Nav, Share, Switc
 		loop: 600000
 	});	
 	loadImg(0);
+	loadImg(1);
+
 	newTab.bind('before', function(prev, cur) {
 		loadImg(cur);
+		loadImg(cur + 1);
 	});
 	
 	$albumShow.bind('mouseenter', function(){
