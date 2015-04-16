@@ -559,6 +559,9 @@ a:hover {
   -o-transform: scale(1.04);
   transform: scale(1.04);
 }
+.header .current a {
+  color: #6f9bc8;
+}
 .header .share {
   position: absolute;
   right: 220px;
@@ -669,6 +672,8 @@ body {
 }
 .bgbright {
   background: #fff;
+  width: 1216px;
+  margin: 0 auto;
 }
 .content {
   position: relative;
@@ -1285,6 +1290,7 @@ body {
   overflow: hidden;
   font-size: 13px;
   line-height: 1.5;
+  padding-top: 20px;
 }
 .association .detail p {
   text-indent: 25px;
@@ -1397,7 +1403,7 @@ body {
 .page-guide {
   height: 800px;
   position: relative;
-  background: url(../img/3_e9d044e.png) 50% 0 no-repeat;
+  background: url(../img/3_ea65e24.png) 50% 0 no-repeat;
 }
 .page-guide .gd {
   position: absolute;
