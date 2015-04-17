@@ -2101,7 +2101,12 @@ input::-ms-clear {
 .page-account .money {
   padding-right: 10px;
   color: #d10e44;
-  font-size: 18px;
+  font-size: 14px;
+}
+.page-account .money_big {
+  padding-right: 10px;
+  color: #d10e44;
+  font-size: 25px;
 }
 .page-account .account {
   margin-bottom: 30px;
@@ -2110,7 +2115,7 @@ input::-ms-clear {
   border: 1px solid #ddd;
 }
 .page-account .account h4 {
-  font-size: 14px;
+  font-size: 18px;
 }
 .page-account .account .btn {
   background: #d10e44;

@@ -21,10 +21,20 @@ define([
 		});
 
 
-		$node.on('submit', function(e){
+		// $node.on('submit', function(e){
+		// 	if(!Login.isLogin()){
+		// 		e.preventDefault();
+		// 		Login.needLogin();
+		// 		return false;
+		// 	}
+		// });
+
+		$('.btn-buy').on('click', function(e){
 			if(!Login.isLogin()){
 				e.preventDefault();
 				Login.needLogin();
+
+				return false;
 			}
 		});
 
