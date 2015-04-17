@@ -278,24 +278,47 @@ body{ background: #f5f5f5;}
 
 
 .page-reg{ background: #fff;
-	.head{ height: 105px; border-bottom: 2px solid #ff0042;
-		.icon{ display: inline-block; margin: 0 auto; height: 105px; width: 520px;background: @icons 0 -632px no-repeat;}
+	.head{ height: 105px; border-bottom: 2px solid #ff0042; text-align: center;
+		.icon{ margin: 0 auto; display: inline-block; margin: 20px auto 0; height: 70px; width: 520px;background: @icons 0 -632px no-repeat;}
 	}
 
 }
+
+/* html5form valid */
+.g_tip{position:absolute;left:-9999px;top:-9999px;z-index:9999;padding:6px 8px;background:#ffc;border:1px solid #ded19c;color:#404040;border-radius:2px;box-shadow:2px 2px 6px #808080;*padding:6px 8px 5px;cursor:pointer;}
+.g_tip p{margin:3px 0 0;color:#a69a75;}
+.g_tip .arrow{position:absolute;left:10px;top:-5px;width:7px;height:5px;overflow:hidden;}
+.g_valid{border-color:#e00!important;}
+.g_placeholder{color:#808080;}
+input:-moz-placeholder{color:#808080;}
+input:-webkit-placeholder{color:#808080;}
+input:placeholder{color:#808080;}
 .box-reg{ width: 455px; margin: 0 auto; padding-top: 30px; color: @gray; font-size: 16px;
 	.t{ height: 70px;
 		.btn{ float: left; height: 38px; width: 208px; line-height: 38px; font-size: 16px; text-align: center; border: 2px solid #ddd; position: relative; color: @gray;}
 		.btn2{ float: right;}
-		i{ display: none; position: absolute; right: 0; bottom: 0; width: 5px; height: 5px; background: @icons -50px 0 no-repeat;}
+		i{ display: none; position: absolute; right: 0; bottom: 0; width: 11px; height: 9px; background: @icons -73px 0 no-repeat;}
 		.current{ border-color: #ff0042;
 			i{ display: block;}
 		}
 	}
 	.td{ display: inline-block; width: 80px; text-align: right; padding-right: 10px;}
-	.frm-group{ border-bottom: 1px solid #ddd;}
+	.frm-group{ margin-bottom: 20px; border-bottom: 1px solid #ddd;}
 	.frm-line{ border: 1px solid #ddd; border-bottom: none; height: 48px; line-height: 48px;}
 	.ipt{ border: none; height: 24px; line-height: 24px; padding: 12px 5px; width: 300px;}
+	.frm-line2{ width: 70%;border-bottom: 1px solid #ddd; position: relative;
+		.ipt{ width: 200px; }
+		.code{ 
+			position: absolute; right: -110px; top: 0; width: 100px; height: 48px; cursor: pointer;
+		}
+	}
+	.btn-reg{ display: block; margin: 20px auto; color: #fff; height: 48px; line-height: 48px; border-radius: 3px; background: #ff0042; text-align: center; font-size: 14px;
+		i{ font-size: 16px;}
+	}
+	.reg-bot{ font-size: 12px; text-align: right;
+		.rules{ color: #f00; float: left;}
+	}
+	.form-enter{ display: none;}
 }
 
 

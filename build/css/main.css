@@ -518,7 +518,7 @@ a:hover {
   background: #fff;
 }
 .header .logo {
-  background: url("../img/icons_8ee373a.png") 0 -632px no-repeat;
+  background: url("../img/icons_a9a92de.png") 0 -632px no-repeat;
   position: relative;
   left: 0;
   width: 520px;
@@ -572,7 +572,7 @@ a:hover {
   position: relative;
   display: inline-block;
   margin: 0 5px;
-  background: url("../img/icons_8ee373a.png") 0 -399px no-repeat;
+  background: url("../img/icons_a9a92de.png") 0 -399px no-repeat;
   width: 22px;
   height: 23px;
   vertical-align: middle;
@@ -587,7 +587,7 @@ a:hover {
   right: -20px;
   width: 125px;
   height: 125px;
-  background: #ffffff url("../img/icons_8ee373a.png") 5px -500px no-repeat;
+  background: #ffffff url("../img/icons_a9a92de.png") 5px -500px no-repeat;
   box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
 }
 .header .fixed {
@@ -642,7 +642,7 @@ a:hover {
   width: 21px;
   height: 15px;
   vertical-align: middle;
-  background: url("../img/icons_8ee373a.png") -244px -67px no-repeat;
+  background: url("../img/icons_a9a92de.png") -244px -67px no-repeat;
 }
 .g-banner {
   height: 100px;
@@ -1197,7 +1197,7 @@ body {
   top: 390px;
   width: 45px;
   height: 70px;
-  background: #ffffff url("../img/icons_8ee373a.png") -47px -52px no-repeat;
+  background: #ffffff url("../img/icons_a9a92de.png") -47px -52px no-repeat;
   cursor: pointer;
   right: 20px;
   filter: alpha(opacity= 80 );
@@ -1394,7 +1394,7 @@ body {
   bottom: 100px;
   height: 40px;
   width: 50px;
-  background: url("../img/icons_8ee373a.png") -147px -505px no-repeat;
+  background: url("../img/icons_a9a92de.png") -147px -505px no-repeat;
 }
 .custom-1 {
   padding-left: 31px;
@@ -1555,4 +1555,165 @@ body {
     opacity: 0.9;
     transform: scale(0.95);
   }
+}
+.page-reg {
+  background: #fff;
+}
+.page-reg .head {
+  height: 105px;
+  border-bottom: 2px solid #ff0042;
+  text-align: center;
+}
+.page-reg .head .icon {
+  margin: 0 auto;
+  display: inline-block;
+  margin: 20px auto 0;
+  height: 70px;
+  width: 520px;
+  background: url("../img/icons_a9a92de.png") 0 -632px no-repeat;
+}
+/* html5form valid */
+.g_tip {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  z-index: 9999;
+  padding: 6px 8px;
+  background: #ffc;
+  border: 1px solid #ded19c;
+  color: #404040;
+  border-radius: 2px;
+  box-shadow: 2px 2px 6px #808080;
+  *padding: 6px 8px 5px;
+  cursor: pointer;
+}
+.g_tip p {
+  margin: 3px 0 0;
+  color: #a69a75;
+}
+.g_tip .arrow {
+  position: absolute;
+  left: 10px;
+  top: -5px;
+  width: 7px;
+  height: 5px;
+  overflow: hidden;
+}
+.g_valid {
+  border-color: #e00!important;
+}
+.g_placeholder {
+  color: #808080;
+}
+input:-moz-placeholder {
+  color: #808080;
+}
+input:-webkit-placeholder {
+  color: #808080;
+}
+input:placeholder {
+  color: #808080;
+}
+.box-reg {
+  width: 455px;
+  margin: 0 auto;
+  padding-top: 30px;
+  color: #898989;
+  font-size: 16px;
+}
+.box-reg .t {
+  height: 70px;
+}
+.box-reg .t .btn {
+  float: left;
+  height: 38px;
+  width: 208px;
+  line-height: 38px;
+  font-size: 16px;
+  text-align: center;
+  border: 2px solid #ddd;
+  position: relative;
+  color: #898989;
+}
+.box-reg .t .btn2 {
+  float: right;
+}
+.box-reg .t i {
+  display: none;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 11px;
+  height: 9px;
+  background: url("../img/icons_a9a92de.png") -73px 0 no-repeat;
+}
+.box-reg .t .current {
+  border-color: #ff0042;
+}
+.box-reg .t .current i {
+  display: block;
+}
+.box-reg .td {
+  display: inline-block;
+  width: 80px;
+  text-align: right;
+  padding-right: 10px;
+}
+.box-reg .frm-group {
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+}
+.box-reg .frm-line {
+  border: 1px solid #ddd;
+  border-bottom: none;
+  height: 48px;
+  line-height: 48px;
+}
+.box-reg .ipt {
+  border: none;
+  height: 24px;
+  line-height: 24px;
+  padding: 12px 5px;
+  width: 300px;
+}
+.box-reg .frm-line2 {
+  width: 70%;
+  border-bottom: 1px solid #ddd;
+  position: relative;
+}
+.box-reg .frm-line2 .ipt {
+  width: 200px;
+}
+.box-reg .frm-line2 .code {
+  position: absolute;
+  right: -110px;
+  top: 0;
+  width: 100px;
+  height: 48px;
+  cursor: pointer;
+}
+.box-reg .btn-reg {
+  display: block;
+  margin: 20px auto;
+  color: #fff;
+  height: 48px;
+  line-height: 48px;
+  border-radius: 3px;
+  background: #ff0042;
+  text-align: center;
+  font-size: 14px;
+}
+.box-reg .btn-reg i {
+  font-size: 16px;
+}
+.box-reg .reg-bot {
+  font-size: 12px;
+  text-align: right;
+}
+.box-reg .reg-bot .rules {
+  color: #f00;
+  float: left;
+}
+.box-reg .form-enter {
+  display: none;
 }

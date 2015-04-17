@@ -1,4 +1,4 @@
-require(['app/nav', 'app/share', 'module/switchtab'], function(Nav, Share, Switchtab) {
+require(['app/nav', 'app/share', 'tui/html5form', 'module/switchtab'], function(Nav, Share, Html5form, Switchtab) {
 	Nav.init({
 		disabled: false
 	});
@@ -78,6 +78,42 @@ require(['app/nav', 'app/share', 'module/switchtab'], function(Nav, Share, Switc
 
 		$('.gotop')[top> 900 ? 'show' : 'hide']();
 
+	});
+
+	//注册
+	$('#pageReg').on('click', '.btn', function(e){
+		e.preventDefault();
+		var self = $(this);
+
+		if(self.hasClass('current')) return;
+
+		self.addClass('current').siblings().removeClass('current');
+
+		if(self.index() == 0){
+			$('.form-enter').hide();
+			$('.form-personal').show();
+		}else{
+			$('.form-enter').show();
+			$('.form-personal').hide();
+		}
+	});
+
+
+	var pForm = $('.form-personal form');
+	var eForm = $('.form-enter form');
+	var h5form1 = new Html5form(pForm);
+	var h5form2 = new Html5form(eForm);
+
+	$('#personalReg').on('click', function(e){
+		e.preventDefault();
+
+		pForm.submit();
+	});
+
+	$('#enterReg').on('click', function(e){
+		e.preventDefault();
+
+		eForm.submit();
 	});
 
 

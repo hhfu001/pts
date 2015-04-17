@@ -526,6 +526,671 @@ define("module/switchtab", [
     return Klass;
 });
 
+/* @source tui/placeholder.js */;
+
+define('tui/placeholder', [
+  "tui/event"
+], function(Event) {
+	var PLACEHOLDER = 'placeholder' in document.createElement('input'),
+		list = [],
+		Klass = Event.extend({
+			initialize: function(item, state) {
+				var self = this;
+				Klass.superClass.initialize.apply(self, arguments);
+				item = $(item);
+				self.item = item;
+				var ph = self.ph = item.attr('placeholder');
+				//占位符为空字符串跳过
+				if(ph == '')
+					return;
+				//初始化判断，因为ie和ff会在刷新页面后可能autocomplete遗留表单数据，此时占位符就成为遗留的默认数据；也可能在js执行前有用户输入。唯一的缺点是假如在js执行前用户输入的和占位符相同，会被误认为占位符，可忽视。
+				if(state)
+					self.state2 = state;
+				else if(ph == item.val() || item.val() == '')
+					self.state2 = true;
+				else
+					self.state2 = false;
+				if(!PLACEHOLDER && self.state2) {
+					item.val(ph);
+					self.trigger('placeholder', [item, self.state2]);
+				}
+				self.focus = function() {
+					//打开状态下认为是占位符
+					if(self.state2) {
+						!PLACEHOLDER && item.val('');
+						self.state2 = false;
+						self.trigger('placeholder', [item, self.state2]);
+					}
+				};
+				self.blur = function() {
+					//离开时如有输入数据开关关闭，否则打开
+					var s = item.val();
+					if(s == '') {
+						!PLACEHOLDER && item.val(ph);
+					}
+					self.state2 = s == '';
+					if(self.state2) {
+						self.trigger('placeholder', [item, self.state2]);
+					}
+				};
+				//失聚焦时判断
+				item.focus(self.focus).bind('blur', self.blur);
+			},
+			state: function(state) {
+				var self = this;
+				if(state !== undefined) {
+					self.state2 = state;
+					if(state) {
+						self.restore();
+					}
+				}
+				return self.state2;
+			},
+			restore: function() {
+				var self = this;
+				if(!self.state2 && !PLACEHOLDER) {
+					self.state2 = true;
+					self.item.val(self.ph);
+					self.trigger('placeholder', [self.item, self.state2]);
+				}
+			},
+			cancel: function() {
+				var self = this;
+				self.item.unbind('focus', self.focus).unbind('blur', self.blur);
+				var idx = list.indexOf(self.item[0]);
+				if(idx > -1) {
+					list.splice(idx, 1);
+				}
+				return self;
+			}
+		});
+	Klass.NATIVE = PLACEHOLDER;
+	return Klass;
+});
+
+/* @source tui/limitTextarea.js */;
+
+define('tui/limitTextarea', [
+  "tui/event"
+], function(Event) {
+	var ie9 = $.browser.msie && $.browser.version == '9.0';
+	function virtualTextareaMaxlength(item) {
+		var max = parseInt(item.attr('maxlength')),
+			v = item.val();
+		if(!isNaN(max) && v.length > max) {
+			var i,
+				bookmark,
+				oS = document.selection.createRange(),
+				oR = document.body.createTextRange();
+			oR.moveToElementText(item[0]);
+			bookmark = oS.getBookmark();
+			for (i = 0; oR.compareEndPoints('StartToStart', oS) < 0 && oS.moveStart("character", -1) !== 0; i++)
+				//ie的换行是\r\n，算2个字符长度
+				if(v.charAt(i) == '\n')
+					i++;
+			item.val(v.substr(0, Math.min(max, i - 1)) + v.substr(i, Math.min(max, v.length)));
+			//模拟光标位置
+			if(v.length != i) {
+				var range = item[0].createTextRange();
+				range.collapse(true);
+				range.moveEnd('character', i - 1);
+				range.moveStart('character', i - 1);
+				range.select();
+			}
+		}
+	}
+	function cb(self, item) {
+		var v = item.val();
+		self.trigger('input', [v.length, parseInt(item.attr('maxlength'))]);
+	}
+	var Klass = Event.extend({
+		initialize: function(item) {
+			var self = this;
+			Klass.superClass.initialize.apply(self, arguments);
+			if($.type(item) == 'string')
+				item = $(item);
+			if(window.addEventListener) {
+				item.bind('input', function() {
+					if(ie9)
+						virtualTextareaMaxlength(item);
+					cb(self, item);
+				});
+				//ie9对于delete、backspace、剪切、粘帖不支持，需hack
+				if(ie9)
+					item.bind('keydown cut paste', function(e) {
+						switch(e.type) {
+							case 'keydown':
+								if(e.keyCode != 46 && e.keyCode != 8)
+									return;
+							default:
+								setTimeout(function() {
+									virtualTextareaMaxlength(item);
+									cb(self, item);
+								}, 0);
+						}
+					});
+			}
+			else {
+				item.bind('propertychange', function() {
+					virtualTextareaMaxlength(item);
+					cb(self, item);
+				});
+			}
+		}
+	});
+	return Klass;
+});
+
+/* @source tui/html5formcore.js */;
+
+define('tui/html5formcore', [
+  "tui/event",
+  "tui/limitTextarea",
+  "tui/placeholder"
+], function(Event, LimitTextarea, Placeholder) {
+	var ie9 = $.browser.msie && $.browser.version == '9.0',
+		TYPE_VALID = {
+			'url': /^\s*[a-zA-z]+:\/\/.*$/,
+			'email': /^\s*\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*\s*$/,
+			'number': /^\s*-?\.*\d+\s*$/,
+			'date': /^\s*\d{2,4}-\d{1,2}-\d{1,2}\s*$/,
+			'time': /^\s*\d{1,2}:\d{1,2}(:\d{1,2}(\.\d{1,3})?)?\s*$/,
+			'color': /^\s*#?[a-z\d]{3,6}\s*$/
+		},
+		input = document.createElement('input'),
+		AUTOFOCUS = 'autofocus' in input,
+		FORM = 'form' in input,
+		SELECTOR = ':input:not(:button, :submit, :radio, :checkbox, :reset)',
+		Klass = Event.extend({
+			initialize: function(form, callback, type) {
+				var self = this;
+				Klass.superClass.initialize.apply(self, arguments);
+				if($.type(form) == 'string')
+					form = $(form);
+				self.form2 = form;
+				self.type2 = type = type || Klass.VALID_BLUR;
+				self.list2 = [];
+				self.ph2 = [];
+				if($.type(callback) != 'function') {
+					type = callback;
+					callback = undefined;
+				}
+				//init
+				if(!form[0] || form[0].nodeName != 'FORM')
+					return;
+				//autofocus
+				if(!AUTOFOCUS)
+					form.find(':input').each(function() {
+						if(this.getAttribute('autofocus') != null) {
+							var item = $(this);
+							item.focus();
+						}
+					});
+				//placeholder
+				if(!Placeholder.NATIVE)
+					form.find('input[placeholder]').each(function() {
+						var item = $(this),
+							ph = new Placeholder(item);
+						self.list2.push(this);
+						self.ph2.push(ph);
+						ph.bind('placeholder', function(item, state) {
+							self.trigger('placeholder', [item, state]);
+						});
+					});
+				//delegate
+				self.focusout2 = function() {
+					form.attr('novalidate') || self.valid($(this));
+				};
+				if(type == Klass.VALID_BLUR)
+					form.delegate(SELECTOR, 'focusout', self.focusout2);
+				var ta = [];
+				self.focusin2 = function() {
+					//LimitTextarea
+					var item = $(this);
+					if(this.nodeName == 'TEXTAREA' && ta.indexOf(this) == -1) {
+						new LimitTextarea(item);
+						ta.push(this);
+					}
+					self.trigger('focus', [item]);
+				};
+				form.delegate(SELECTOR, 'focusin', self.focusin2);
+				//触发输入
+				self.input2 = function() {
+					self.trigger('input', [$(this)]);
+				};
+				self.keydown_cut_paste2 = function(e) {
+					var o = $(this);
+					switch(e.type) {
+						case 'keydown':
+							if(e.keyCode != 46 && e.keyCode != 8)
+								return;
+						default:
+							setTimeout(function() {
+								self.trigger('input', [o]);
+							}, 0);
+					}
+				};
+				if(window.addEventListener) {
+					form.delegate(SELECTOR, 'input', self.input2);
+					if(ie9)
+						form.delegate('textarea', 'keydown cut paste', self.keydown_cut_paste2);
+				}
+				else
+					form.delegate(SELECTOR, 'keydown contextmenu', self.input2);
+				//代理input[text]的点击使浏览器原声html5校验ui失效
+				form.delegate('input:text[name]', 'keypress', function(e) {
+					if(e.keyCode == 13) {
+						e.preventDefault();
+						form.submit();
+					}
+				});
+				//代理input[submit]的点击使浏览器原声html5校验ui失效
+				self.click2 = function(e) {
+					e.preventDefault();
+					form.submit();
+				};
+				form.delegate('input:submit', 'click', self.click2);
+				self.submit2 = function(e) {
+					//form需要验证并且通过验证后触发callback
+					var res = form.attr('novalidate') || self.validAll();
+					if(res) {
+						if(callback) {
+							return callback.call(this, e);
+						}
+					}
+					else {
+						e.preventDefault();
+					}
+				};
+				form.bind('submit', self.submit2);
+			},
+			valid: function(item) {
+				var form = this.form2,
+					v = item.val(),
+					type = (item[0].getAttribute('type') || 'text').toLowerCase(),
+					pattern = item.attr('pattern'),
+					required = item[0].getAttribute('required') != null,
+					index = this.list2.indexOf(item[0]);
+				//required，注意placeholder冲突
+				if(required && (v == '' || (index != -1 && this.ph2[index].state())) && !this.ignore(item)) {
+					this.trigger('required', [item]);
+					return false;
+				}
+				//几种input类型
+				if(v && v.length && item[0].nodeName == 'INPUT' && !this.ignore(item) && TYPE_VALID[type] && !TYPE_VALID[type].test(v)) {
+					this.trigger(type, [item]);
+					return false;
+				}
+				//number类型另附验证范围
+				if(v && v.length && type == 'number' && !this.ignore(item)) {
+					var max = parseFloat(item.attr('max')),
+						min = parseFloat(item.attr('min')),
+						v2 = parseFloat(v);
+					if(!isNaN(max) && v2 > max) {
+						this.trigger('max', [item, max]);
+						return false;
+					}
+					if(!isNaN(min) && v2 < min) {
+						this.trigger('min', [item, min]);
+						return false;
+					}
+				}
+				//自定义pattern，只支持text类型，注意placeholder冲突
+				if(pattern && pattern.length && type == 'text' && v && !this.ignore(item)) {
+					if(index != -1 && this.ph2[index].state()) {
+						return true;
+					}
+					pattern = new RegExp(pattern);
+					if(!pattern.test(v)) {
+						this.trigger('pattern', [item]);
+						return false;
+					}
+				}
+				return true;
+			},
+			validAll: function() {
+				var self = this,
+					res = true,
+					list = self.form2.find(SELECTOR);
+				list.each(function(i) {
+					res = res && self.valid(list.eq(i));
+				});
+				return res;
+			},
+			ignore: function(item) {
+				if($.type(item) == 'string')
+					item = $(item);
+				return item.prop('disabled') || item[0].getAttribute('novalidate') != null;
+
+			},
+			type: function() {
+				return this.type2;
+			},
+			placeholder: function(item, state) {
+				item = $(item);
+				var i = this.list2.indexOf(item[0]);
+				if(i != -1)
+					return this.ph2[i];
+				console.error('placeholder not found: ' + item[0]);
+			},
+			cancel: function() {
+				this.form2.undelegate(SELECTOR, 'focusout', this.focusout2);
+				this.form2.undelegate(SELECTOR, 'focusin', this.focusin2);
+				this.form2.undelegate(SELECTOR, 'input', this.input2);
+				if(ie9)
+					this.form2.undelegate('textarea', 'keydown cut paste', this.keydown_cut_paste2);
+				this.form2.undelegate(SELECTOR, 'keydown contextmenu', this.input2);
+				this.form2.undelegate('input:submit', 'click', this.click2);
+				this.form2.unbind('submit', this.submit2);
+				this.ph2.forEach(function(ph) {
+					ph.cancel();
+				});
+			}
+		});
+	Klass.VALID_BLUR = 1;
+	Klass.VALID_SUBMIT = 2;
+	Klass.SELECTOR = SELECTOR;
+	return Klass;
+});
+
+/* @source tui/template.js */;
+
+/**
+ * A lightweight and enhanced micro-template implementation, and minimum utilities
+ *
+ * using AMD (Asynchronous Module Definition) API with OzJS
+ * see http://ozjs.org for details
+ *
+ * Copyright (C) 2010-2012, Dexter.Yy, MIT License
+ * vim: et:ts=4:sw=4:sts=4
+ */
+define('tui/template', [], function(require, exports){
+
+	exports.ns = function(namespace, v, parent){
+		var i, p = parent || window, n = namespace.split(".").reverse();
+		while ((i = n.pop()) && n.length > 0) {
+			if (typeof p[i] === 'undefined') {
+				p[i] = {};
+			} else if (typeof p[i] !== "object") {
+				return false;
+			}
+			p = p[i];
+		}
+		if (typeof v !== 'undefined')
+			p[i] = v;
+		return p[i];
+	};
+
+	exports.format = function(tpl, op){
+		return tpl.replace(/<%\=(\w+)%>/g, function(e1,e2){
+			return op[e2] != null ? op[e2] : "";
+		});
+	};
+
+	exports.escapeHTML = function(str){
+		str = str || '';
+		var xmlchar = {
+			//"&": "&amp;",
+			"<": "&lt;",
+			">": "&gt;",
+			"'": "&#39;",
+			'"': "&quot;",
+			"{": "&#123;",
+			"}": "&#125;",
+			"@": "&#64;"
+		};
+		return str.replace(/[<>'"\{\}@]/g, function($1){
+			return xmlchar[$1];
+		});
+	};
+
+	exports.substr = function(str, limit, cb){
+		if(!str || typeof str !== "string")
+			return '';
+		var sub = str.substr(0, limit).replace(/([^\x00-\xff])/g, '$1 ').substr(0, limit).replace(/([^\x00-\xff])\s/g, '$1');
+		return cb ? cb.call(sub, sub) : (str.length > sub.length ? sub + '...' : sub);
+	};
+
+	exports.strsize = function(str){
+		return str.replace(/([^\x00-\xff]|[A-Z])/g, '$1 ').length;
+	};
+
+	var document = this.document;
+
+	exports.tplSettings = {
+		_cache: {},
+		evaluate: /<%([\s\S]+?)%>/g,
+		interpolate: /<%=([\s\S]+?)%>/g
+	};
+
+	exports.tplHelpers = {
+		mix: $.extend,
+		escapeHTML: exports.escapeHTML,
+		substr: exports.substr,
+		include: convertTpl,
+		_has: function(obj){
+			return function(name){
+				return exports.ns(name, undefined, obj);
+			};
+		}
+	};
+
+	function convertTpl(str, data, namespace){
+		var func, c  = exports.tplSettings, suffix = namespace ? '#' + namespace : '';
+		if (!/[\t\r\n% ]/.test(str)) {
+			func = c._cache[str + suffix];
+			if (!func) {
+				var tplbox = document.getElementById(str);
+				if (tplbox) {
+					func = c._cache[str + suffix] = convertTpl(tplbox.innerHTML, false, namespace);
+				}
+			}
+		} else {
+			var funStr = 'var __p=[];'
+				+ (namespace ? '' : 'with(obj){')
+					+ 'var mix=api.mix,escapeHTML=api.escapeHTML,substr=api.substr,include=api.include,has=api._has(' + (namespace || 'obj') + ');'
+					+ '__p.push(\'' +
+					str.replace(/\\/g, '\\\\')
+						.replace(/'/g, "\\'")
+						.replace(c.interpolate, function(match, code) {
+							return "'," + code.replace(/\\'/g, "'") + ",'";
+						})
+						.replace(c.evaluate || null, function(match, code) {
+							return "');" + code.replace(/\\'/g, "'")
+												.replace(/[\r\n\t]/g, ' ') + "__p.push('";
+						})
+						.replace(/\r/g, '\\r')
+						.replace(/\n/g, '\\n')
+						.replace(/\t/g, '\\t')
+					+ "');"
+				+ (namespace ? "" : "}")
+				+ "return __p.join('');"
+			try{
+				func = new Function(namespace || 'obj', 'api', funStr);
+			}catch(e){
+				console.log("Could not create a template function: \n" + funStr);
+			}
+		}
+		return !func ? '' : (data ? func(data, exports.tplHelpers) : func);
+	}
+
+	exports.convertTpl = convertTpl;
+	exports.reloadTpl = function(str){
+		delete exports.tplSettings._cache[str];
+	};
+
+});
+
+/* @source tui/html5form.js */;
+
+define('tui/html5form', [
+  "tui/template",
+  "tui/html5formcore",
+  "tui/placeholder"
+], function(template, Html5formcore, Placeholder) {
+	var tpl = '<div class="g_tip"><h3><%=msg%></h3><% if(info && info.length) { %><p><%=info%></p><% } %><span class="arrow"></span></div>',
+		TYPE_MES = {
+			'url': 'url格式不合法',
+			'email': 'email格式不合法',
+			'number': '请输入一个数字',
+			'max': '值必须小于或等于',
+			'min': '值必须大于或等于',
+			'date': '日期格式不合法',
+			'time': '时间格式不合法',
+			'color': '颜色格式不合法',
+			'required': '请填写此项',
+			'pattern': '不符合要求格式'
+		},
+		$body = $('body'),
+		$win = $(window),
+		Klass = Html5formcore.extend({
+			initialize: function() {
+				var self = this;
+				Klass.superClass.initialize.apply(self, arguments);
+				//init
+				self.phs3 = [],
+				self.msg3 = [],
+				self.list3 = [],
+				self.action3 = [];
+				self.bind('required', function(item) {
+					self.tip(item, TYPE_MES['required']);
+				});
+				self.bind('url', function(item) {
+					self.tip(item, TYPE_MES['url']);
+				});
+				self.bind('email', function(item) {
+					self.tip(item, TYPE_MES['email']);
+				});
+				self.bind('number', function(item) {
+					self.tip(item, TYPE_MES['number']);
+				});
+				self.bind('max', function(item, v) {
+					self.tip(item, TYPE_MES['max'] + v);
+				});
+				self.bind('min', function(item, v) {
+					self.tip(item, TYPE_MES['min'] + v);
+				});
+				self.bind('date', function(item) {
+					self.tip(item, TYPE_MES['date']);
+				});
+				self.bind('time', function(item) {
+					self.tip(item, TYPE_MES['time']);
+				});
+				self.bind('color', function(item) {
+					self.tip(item, TYPE_MES['color']);
+				});
+				self.bind('required', function(item) {
+					self.tip(item, TYPE_MES['required']);
+				});
+				self.bind('pattern', function(item) {
+					self.tip(item, TYPE_MES['pattern']);
+				});
+				self.bind('placeholder', function(item, state) {
+					item = $(item);
+					if(state)
+						item.addClass('g_placeholder');
+					else
+						item.removeClass('g_placeholder');
+				});
+				self.bind('input', function(item) {
+					self.clear(item);
+				});
+				//低版本浏览器初始化具有placeholder的input
+				if(!Placeholder.NATIVE) {
+					var phs = self.form2.find('input[placeholder]');
+					phs.each(function(i, item) {
+						var ph = self.placeholder(item),
+							state = ph.state();
+						if(state) {
+							$(item).addClass('g_placeholder');
+						}
+					});
+				}
+			},
+			tip: function(item, msg) {
+				console && console.warn && console.warn(item);
+				var self = this;
+				self.clearAll();
+				self.list3.push(item);
+				self.phs3.push(item[0]);
+				item.addClass('g_valid');
+				var o = $(template.convertTpl(tpl, {
+					msg: msg,
+					info: item.attr('title') || ''
+				}));
+				o.css({
+					left: item.offset().left,
+					top: item.offset().top + 7
+				});
+				o.click(function() {
+					item.focus();
+				});
+				self.msg3.push(o);
+				$body.append(o);
+				var offset = o.offset().top + o.outerHeight() - $win.scrollTop() - $win.height();
+				if(offset > 0)
+					$win.scrollTop($win.scrollTop() + offset);
+				var i = 4,
+					s;
+				self.action3.push(s = setInterval(function() {
+					o.css('left', o.offset().left + i);
+					if(i < 0) {
+						++i;
+					}
+					if(i == 0) {
+						clearInterval(s);
+						return;
+					}
+					i *= -1;
+				}, 50));
+				if($win.scrollTop() > item.offset().top) {
+					$win.scrollTop(item.offset().top);
+				}
+				else if($win.scrollTop() + $win.height() < item.offset().top + item.height()) {
+					$win.scrollTop(item.offset().top + item.height() - $win.height());
+				}
+				//过段时间清除
+				if(self.ct) {
+					clearTimeout(self.ct);
+				}
+				self.ct = setTimeout(function() {
+					self.clearAll();
+				}, 5000);
+				return this;
+			},
+			clear: function(item) {
+				if($.type(item) == 'string')
+					item = $(item);
+				var i = this.phs3.indexOf(item[0]);
+				if(i != -1) {
+					this.phs3.splice(i, 1);
+					this.list3.splice(i, 1);
+					this.msg3[i].remove();
+					this.msg3.splice(i, 1);
+					clearInterval(this.action3[i]);
+					this.action3.splice(i, 1);
+					item.removeClass('g_valid');
+				}
+				return this;
+			},
+			clearAll: function() {
+				this.phs3 = [];
+				while(this.msg3.length) {
+					this.msg3.pop().remove();
+				}
+				while(this.list3.length) {
+					this.list3.pop().removeClass('g_valid');
+				}
+				while(this.action3.length) {
+					var o = this.action3.pop();
+					clearInterval(o);
+				}
+				return this;
+			}
+		});
+	return Klass;
+});
+
 /* @source app/share.js */;
 
 define("app/share", [], function() {
@@ -1192,7 +1857,7 @@ define("app/nav", [
 });
 /* @source  */;
 
-require(['app/nav', 'app/share', 'module/switchtab'], function(Nav, Share, Switchtab) {
+require(['app/nav', 'app/share', 'tui/html5form', 'module/switchtab'], function(Nav, Share, Html5form, Switchtab) {
 	Nav.init({
 		disabled: false
 	});
@@ -1272,6 +1937,42 @@ require(['app/nav', 'app/share', 'module/switchtab'], function(Nav, Share, Switc
 
 		$('.gotop')[top> 900 ? 'show' : 'hide']();
 
+	});
+
+	//注册
+	$('#pageReg').on('click', '.btn', function(e){
+		e.preventDefault();
+		var self = $(this);
+
+		if(self.hasClass('current')) return;
+
+		self.addClass('current').siblings().removeClass('current');
+
+		if(self.index() == 0){
+			$('.form-enter').hide();
+			$('.form-personal').show();
+		}else{
+			$('.form-enter').show();
+			$('.form-personal').hide();
+		}
+	});
+
+
+	var pForm = $('.form-personal form');
+	var eForm = $('.form-enter form');
+	var h5form1 = new Html5form(pForm);
+	var h5form2 = new Html5form(eForm);
+
+	$('#personalReg').on('click', function(e){
+		e.preventDefault();
+
+		pForm.submit();
+	});
+
+	$('#enterReg').on('click', function(e){
+		e.preventDefault();
+
+		eForm.submit();
 	});
 
 
