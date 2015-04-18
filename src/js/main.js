@@ -110,11 +110,53 @@ require(['app/nav', 'app/share', 'tui/html5form', 'module/switchtab'], function(
 		pForm.submit();
 	});
 
+	pForm.on('click', '.code', function(e){
+		e.preventDefault();
+
+		var me = $(this);
+		var ipt = pForm.find('.idcode');
+
+		$.ajax({
+			url: '',
+			success: function(res){
+				var src = res ;
+				var res = {
+					src: '12',
+					code: '222'
+				}
+
+				me.attr('src', res.src);
+				ipt.val( res.code);
+			}
+		});
+	})
+
 	$('#enterReg').on('click', function(e){
 		e.preventDefault();
 
 		eForm.submit();
 	});
+
+	eForm.on('click', '.code', function(e){
+		e.preventDefault();
+
+		var me = $(this);
+		var ipt = eForm.find('.idcode');
+
+		$.ajax({
+			url: '',
+			success: function(res){
+				var src = res ;
+				var res = {
+					src: '12',
+					code: '222'
+				}
+
+				me.attr('src', res.src);
+				ipt.val( res.code);
+			}
+		});
+	})
 
 
 
