@@ -90,7 +90,7 @@ define('tui/html5form', ['./template', './html5formcore', './placeholder'], func
 					info: item.attr('title') || ''
 				}));
 				o.css({
-					left: item.offset().left,
+					left: item.offset().left + 200,
 					top: item.offset().top + 7
 				});
 				o.click(function() {
