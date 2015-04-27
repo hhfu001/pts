@@ -1212,12 +1212,13 @@ define("app/form", [
 		var codeIpt = form.find('[name=code]');
 		var codeSucc = false;
 		var emailSucc = false;
+		var nameSucc = false;
 
 		form.on('click', '.btn-reg', function(e){
 			e.preventDefault();
 
-			if(name.val().trim().length < 4 ){
-				h5form.tip(name, '至少输入四位数');
+			if( !nameSucc ){
+				h5form.tip(name, '用户名无效');
 				return;
 			}
 
@@ -1251,8 +1252,8 @@ define("app/form", [
 				}
 			}
 
-			if(!/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test( email.val().trim())){
-				h5form.tip(email, '请填写正确的email');
+			if(!/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test( email.val().trim()) || !emailSucc){
+				h5form.tip(email, '邮箱无效或已注册!');
 				return;
 			}
 
@@ -1303,11 +1304,12 @@ define("app/form", [
 				return;
 			}
 
-			$.post('/check.php', { act: 'name', v: val }, function(res) {
-				if(res == 1){
+			$.post('check.php', { act: 'name', v: val }, function(res) {
 
-				}else{
+				nameSucc = res == 1;
 
+				if(!nameSucc){
+					h5form.tip(me, '账号已存在！');
 				}
 
 			}, 'json');
@@ -1318,38 +1320,41 @@ define("app/form", [
 			var me =  $(this);
 			var val = me.val();
 			
-			if(val.length < 1){
+			if(!/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(val)){
 				h5form.tip(me, '请填写邮箱');
 				return;
 			}
 
-			$.post('/check.php', { act: 'email', v: val}, function(res) {
+			$.post('check.php', { act: 'email', v: val}, function(res) {
 
 				emailSucc = res == 1;
+				if(!emailSucc){
+					h5form.tip(me, '该邮箱已注册！');
+				}
 
 			}, 'json');
 
 		});
 
-		codeIpt.on('blur', function(){
+		codeIpt.on('input', function(){
 
 			var me =  $(this);
 			var val = me.val();
 
-			if(val.length < 1){
-				h5form.tip(me, '请填写验证码');
-				return;
+			if(val.length == 5){
+
+				$.post('check.php', { act: 'code', v: val , id: code.attr('codeId') }, function(res) {
+					codeSucc = res == 1;
+
+					if(!codeSucc){
+						h5form.tip(me, '验证码无效');
+
+						code.attr('src', 'get_code.php?load=yes&id=' + code.attr('codeId') + '&' + Math.random());
+					}
+
+				}, 'json');
+
 			}
-
-			$.post('/check.php', { act: 'code', v: val }, function(res) {
-				codeSucc = res == 1;
-				if(!codeSucc){
-					h5form.tip(me, '验证码无效');
-
-					code.attr('src', 'get_code.php?load=yes&id=' + code.attr('codeId') + '&' + Math.random());
-				}
-
-			}, 'json');
 
 		});
 
