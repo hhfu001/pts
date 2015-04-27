@@ -9,6 +9,45 @@
 require.config({ enable_ozma: true });
 
 
+/* @source tui/util/url.js */;
+
+
+define('tui/util/url',[], function(require, exports) {
+
+	/**
+	 * @public 跳到到指定地址，相对于open或location=，但是可以避免IE里location跳转时获取不到referrer的问题
+	 * @reference http://webbugtrack.blogspot.com/2008/11/bug-421-ie-fails-to-pass-http-referer.html
+	 * @TODO 会引起点击统计无法获得正确的位置编码
+	 */
+	function openURL(url, target){
+		if (!$.browser.msie) {
+			if(target)
+				window.open(url, target)
+			else
+				location.href = url;
+		} else {
+			var a = $('<a href="' + url + '" target="'+ (target||'_self') +'" data-openurl="true"> </a>')[0];
+			document.body.appendChild(a);
+			a.click();
+		}
+	}
+
+	function params(url) {
+		url = url || location.search || location.href;
+		var params = {},
+			result = url.match(/[^\s&?#=\/]+=[^\s&?#=]+/g);
+		if(result)
+			for(var i = 0, l = result.length; i < l; i++) {
+				var n = result[i].split('=');
+				params[n[0]] = decodeURIComponent(n[1]);
+			}
+		return params;
+	}
+
+	exports.openURL = openURL;
+	exports.params = params;
+});
+
 /* @source tui/class.js */;
 
 
@@ -3461,8 +3500,9 @@ require([
 	'tui/art',
 	'm/model',
 	'tui/countdown',
-	'm/address'
-], function(Nav, Pie, Buyform, MSelect, Html5form, Dialog, Art, Model, Countdown, Address){
+	'm/address',
+	'tui/util/url'
+], function(Nav, Pie, Buyform, MSelect, Html5form, Dialog, Art, Model, Countdown, Address, Url){
 	Nav.init();
 	
 	Pie.init();
@@ -3705,6 +3745,59 @@ require([
 
 	});
 
+
+
+	//提现
+	var tixianForm = $('#tixianForm');
+	var tixianH5 = new Html5form(tixianForm, Html5form.VALID_BLUR);
+	var $amount = infoForm.find('[name="amount"]');
+	var $accountId = infoForm.find('[name="accountId"]');
+	var $accountName = infoForm.find('[name="accountName"]');
+
+	tixianForm.on('click', '.submit', function(e){
+		e.preventDefault();
+
+		if( /^[0-9]*[1-9][0-9]*$/.test($amount.val())){
+			tixianH5.tip($amount, '请输入正整数提现金额');
+			return;
+		}
+
+		if($accountId.length && !$accountId.val().trim().length){
+			tixianH5.tip($accountId, '请输入转入账户账号');
+			return;
+		}
+		
+		if($accountName.length && !$accountName.val().trim().length){
+			tixianH5.tip($accountName, '请输入转入账户名');
+			return;
+		}
+
+		var params = tixianForm.serialize();
+		params.act = 15;
+		Model.postData(params, function(res){
+			Dialog.alert('提现成功！');
+		});
+
+	});
+
+	//提现
+	$('#btnTixian').on('click', function(e){
+		e.preventDefault();
+		var me = $(this);
+
+		Model.getData({act: 16}, function(res){
+			if(res.data){
+				// console.log(res.msg);
+				Url.openURL(me.attr('href'));
+			}else{
+				Dialog.alert('余额不足！');
+			}
+		});
+
+	})
+
+
+	
 
 
 

@@ -8,8 +8,9 @@ require([
 	'tui/art',
 	'./m/model',
 	'tui/countdown',
-	'./m/address'
-], function(Nav, Pie, Buyform, MSelect, Html5form, Dialog, Art, Model, Countdown, Address){
+	'./m/address',
+	'tui/util/url'
+], function(Nav, Pie, Buyform, MSelect, Html5form, Dialog, Art, Model, Countdown, Address, Url){
 	Nav.init();
 	
 	Pie.init();
@@ -252,6 +253,59 @@ require([
 
 	});
 
+
+
+	//提现
+	var tixianForm = $('#tixianForm');
+	var tixianH5 = new Html5form(tixianForm, Html5form.VALID_BLUR);
+	var $amount = infoForm.find('[name="amount"]');
+	var $accountId = infoForm.find('[name="accountId"]');
+	var $accountName = infoForm.find('[name="accountName"]');
+
+	tixianForm.on('click', '.submit', function(e){
+		e.preventDefault();
+
+		if( !/^[0-9]*[1-9][0-9]*$/.test($amount.val())){
+			tixianH5.tip($amount, '请输入正整数提现金额');
+			return;
+		}
+
+		if($accountId.length && !$accountId.val().trim().length){
+			tixianH5.tip($accountId, '请输入转入账户账号');
+			return;
+		}
+		
+		if($accountName.length && !$accountName.val().trim().length){
+			tixianH5.tip($accountName, '请输入转入账户名');
+			return;
+		}
+
+		var params = tixianForm.serialize();
+		params.act = 15;
+		Model.postData(params, function(res){
+			Dialog.alert('提现成功！');
+		});
+
+	});
+
+	//提现
+	$('#btnTixian').on('click', function(e){
+		e.preventDefault();
+		var me = $(this);
+
+		Model.getData({act: 16}, function(res){
+			if(res.data){
+				// console.log(res.msg);
+				Url.openURL(me.attr('href'));
+			}else{
+				Dialog.alert('余额不足！');
+			}
+		});
+
+	})
+
+
+	
 
 
 
