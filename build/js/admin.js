@@ -3757,7 +3757,7 @@ require([
 	tixianForm.on('click', '.submit', function(e){
 		e.preventDefault();
 
-		if( /^[0-9]*[1-9][0-9]*$/.test($amount.val())){
+		if( !/^[0-9]*[1-9][0-9]*$/.test($amount.val())){
 			tixianH5.tip($amount, '请输入正整数提现金额');
 			return;
 		}
