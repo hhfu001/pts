@@ -32,7 +32,7 @@ define([
 	// 	u_name: 'test'
 	// });
 	// console.log('123123123');
-	// Cookie('RELEASE_VERSION', '2015_04_99', { domain: domain, path: '/', expires: 100});
+	Cookie('RELEASE_VERSION', '2015_04_99', { domain: domain, path: '/', expires: 100});
 
 	var u_id = Cookie('u_id');
 	var u_name = Cookie('u_name');

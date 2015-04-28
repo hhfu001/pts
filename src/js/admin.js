@@ -258,15 +258,15 @@ require([
 	//提现
 	var tixianForm = $('#tixianForm');
 	var tixianH5 = new Html5form(tixianForm, Html5form.VALID_BLUR);
-	var $amount = infoForm.find('[name="amount"]');
-	var $accountId = infoForm.find('[name="accountId"]');
-	var $accountName = infoForm.find('[name="accountName"]');
+	var $amount = tixianForm.find('[name="amount"]');
+	var $accountId = tixianForm.find('[name="accountId"]');
+	var $accountName = tixianForm.find('[name="accountName"]');
 
 	tixianForm.on('click', '.submit', function(e){
 		e.preventDefault();
 
-		if( !/^[0-9]*[1-9][0-9]*$/.test($amount.val())){
-			tixianH5.tip($amount, '请输入正整数提现金额');
+		if( $amount.val() < 100){
+			tixianH5.tip($amount, '请输入大于100的提现金额');
 			return;
 		}
 
@@ -281,9 +281,16 @@ require([
 		}
 
 		var params = tixianForm.serialize();
-		params.act = 15;
 		Model.postData(params, function(res){
-			Dialog.alert('提现成功！');
+			if(res.data){
+				Dialog.alert('提现成功！', function(){
+					Url.openURL('http://www.jishachengta.com.cn/ucenter/account/?op=2');
+				});
+
+			}else{
+				Dialog.alert(res.msg);
+			}
+
 		});
 
 	});
@@ -298,7 +305,7 @@ require([
 				// console.log(res.msg);
 				Url.openURL(me.attr('href'));
 			}else{
-				Dialog.alert('余额不足！');
+				Dialog.alert(reg.msg);
 			}
 		});
 
