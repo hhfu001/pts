@@ -1,4 +1,4 @@
-define(['tui/art'], function(Art, require, exports) {
+define(['tui/art', './login'], function(Art, Login, require, exports) {
 	
 
 	function g_dropdown_toggle() {
@@ -52,9 +52,20 @@ define(['tui/art'], function(Art, require, exports) {
 
 
 	exports.init = function(op) {
+		// Login.autoLogin();
 
 		fixnav(op);
 		g_dropdown_toggle();
+
+		$('#gUser').on('click', '[data-role=login]', function(e){
+			e.preventDefault();
+			Login.needLogin(function(){
+				location.reload();
+			});
+
+
+
+		})
 
 	};
 

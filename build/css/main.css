@@ -518,7 +518,7 @@ a:hover {
   background: #fff;
 }
 .header .logo {
-  background: url("../img/icons_a9a92de.png") 0 -632px no-repeat;
+  background: url("../img/icons_8ee373a.png") 0 -632px no-repeat;
   position: relative;
   left: 0;
   width: 520px;
@@ -572,7 +572,7 @@ a:hover {
   position: relative;
   display: inline-block;
   margin: 0 5px;
-  background: url("../img/icons_a9a92de.png") 0 -399px no-repeat;
+  background: url("../img/icons_8ee373a.png") 0 -399px no-repeat;
   width: 22px;
   height: 23px;
   vertical-align: middle;
@@ -587,7 +587,7 @@ a:hover {
   right: -20px;
   width: 125px;
   height: 125px;
-  background: #ffffff url("../img/icons_a9a92de.png") 5px -500px no-repeat;
+  background: #ffffff url("../img/icons_8ee373a.png") 5px -500px no-repeat;
   box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
 }
 .header .fixed {
@@ -642,7 +642,7 @@ a:hover {
   width: 21px;
   height: 15px;
   vertical-align: middle;
-  background: url("../img/icons_a9a92de.png") -244px -67px no-repeat;
+  background: url("../img/icons_8ee373a.png") -244px -67px no-repeat;
 }
 .g-banner {
   height: 100px;
@@ -1197,7 +1197,7 @@ body {
   top: 390px;
   width: 45px;
   height: 70px;
-  background: #ffffff url("../img/icons_a9a92de.png") -47px -52px no-repeat;
+  background: #ffffff url("../img/icons_8ee373a.png") -47px -52px no-repeat;
   cursor: pointer;
   right: 20px;
   filter: alpha(opacity= 80 );
@@ -1394,7 +1394,7 @@ body {
   bottom: 100px;
   height: 40px;
   width: 50px;
-  background: url("../img/icons_a9a92de.png") -147px -505px no-repeat;
+  background: url("../img/icons_8ee373a.png") -147px -505px no-repeat;
 }
 .custom-1 {
   padding-left: 31px;
@@ -1570,7 +1570,7 @@ body {
   margin: 20px auto 0;
   height: 70px;
   width: 520px;
-  background: url("../img/icons_a9a92de.png") 0 -632px no-repeat;
+  background: url("../img/icons_8ee373a.png") 0 -632px no-repeat;
 }
 /* html5form valid */
 .g_tip {
@@ -1645,7 +1645,7 @@ input:placeholder {
   bottom: 0;
   width: 11px;
   height: 9px;
-  background: url("../img/icons_a9a92de.png") -73px 0 no-repeat;
+  background: url("../img/icons_8ee373a.png") -73px 0 no-repeat;
 }
 .box-reg .t .current {
   border-color: #ff0042;

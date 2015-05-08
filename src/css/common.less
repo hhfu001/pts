@@ -45,7 +45,7 @@ a:hover{ color: @yi; text-decoration: none;}
 	position: relative; height: 206px; width: 100%;border-bottom: 1px solid #ddd; box-shadow: 0 3px 3px rgba(0,0,0,.1); z-index: 100;
 	.sec-1{ height: 48px; position: relative; text-align: right; line-height: 48px;
 		.t{ border-left: 1px solid #898989; padding:0 7px;
-			a{ color: #fff;}
+			a{ color: #fff; margin: 0 3px;}
 		}
 	}
 	.sec{ height: 115px; position: relative; border-bottom: 3px solid #b1d283;}
@@ -85,5 +85,34 @@ a:hover{ color: @yi; text-decoration: none;}
 .banner-side{ height: 200px; overflow: hidden; width: 100%;}
 .banner-main{ width: 830px; margin: 15px 0;
 	.ad{ width: 25%; *width:206px; float: left; height: 100px; overflow: hidden;}
+}
+
+.login_dialog{
+	.tui_dialog_holder{ width: 410px; padding: 40px 0 20px;}
+	.tui_dialog_header{ display: none;}
+	h3{ text-align: center; padding-bottom: 20px; font-size: 18px; color: #404040;}
+	.l{ position: relative; padding: 13px 80px;}
+	.l2{ padding: 0 80px; text-align: right;}
+	.l input{ width: 233px; height: 19px; padding: 5px; border: 1px solid #eee; border-radius: 2px;}
+	.l .codeipt{ width: 100px; vertical-align: middle;}
+	.l .code{ display: inline-block; height: 19px; width: 100px; vertical-align: middle;}
+	.l .icon{ position: absolute; right: 95px; top: 20px; display: block; width: 16px; height: 19px; background: @icons -52px -160px no-repeat;}
+	.l .icon2{ background-position: -100px -160px;}
+	.l .icon3{ background-position: -78px -160px;}
+	.close{ position: absolute; right: 10px; top: 10px; font-size: 14px; color: #808080;}
+	.close:hover{ color: #f60; text-decoration: none;}
+	.p{ padding: 0 80px 20px; text-align: right;}
+	a{ color: #0068b7;}
+	a:hover{text-decoration: underline;}
+	.btn{ padding: 20px 0; border-top: 1px solid #eee; text-align: center; }
+	.submit{ display: inline-block; height: 36px; width: 165px; text-align: center; line-height: 36px; border: none; border-radius: 2px; background: @bgred; color: #fff; font-size: 18px; cursor: pointer;}
+	.submit:hover{ background: #840025; text-decoration: none;}
+	.submit:active{ background: #b5b5b5;}
+	.foot{ padding: 20px; border-top: 1px solid #eee; text-align: right;}
+}
+
+.tip_dialog{text-align: center;
+	.tui_dialog_holder{ width: 410px; padding: 40px 0 20px;}
+	.tui_dialog_header{ display: none;}
 }
 

@@ -1,10 +1,13 @@
 define([
-	'tui/html5form'
-], function(Html5form) {
+	'tui/html5form',
+	'tui/dialog',
+	'tui/art'
+], function(Html5form, Dialog, Art) {
 	return function(node){
 
 		var form = $(node).find('form');
 		var h5form= new Html5form(form);
+		var tipArt = Art.compile(require.text('./tips.tpl'));
 
 		var name = form.find('[name=name]');
 		var pwd = form.find('[name=pwd]');
@@ -67,7 +70,19 @@ define([
 				return;
 			}
 
-			form.submit();
+			var params = form.serialize();
+
+			$.post('reg.php', params, function(res){
+
+				var dlg = new Dialog({
+					className : 'tip_dialog',
+					content : tipArt({msg : res.msg})
+				});
+				
+
+			});
+
+			// form.submit();
 
 		}).on('click', '.code', function(e){
 			e.preventDefault();

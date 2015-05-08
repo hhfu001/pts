@@ -296,14 +296,17 @@ body{ background: #f5f5f5;}
 }
 
 /* html5form valid */
-.g_tip{position:absolute;left:-9999px;top:-9999px;z-index:9999;padding:6px 8px;background:#ffc;border:1px solid #ded19c;color:#404040;border-radius:2px;box-shadow:2px 2px 6px #808080;*padding:6px 8px 5px;cursor:pointer;}
-.g_tip p{margin:3px 0 0;color:#a69a75;}
-.g_tip .arrow{position:absolute;left:10px;top:-5px;width:7px;height:5px;overflow:hidden;}
-.g_valid{border-color:#e00!important;}
-.g_placeholder{color:#808080;}
+.g_tip{position:absolute;left:-9999px;top:-9999px;z-index:10012;padding:6px 8px;background:#ffc;border:1px solid #ded19c; color:#404040;border-radius:2px;box-shadow:2px 2px 6px #808080;*padding:6px 8px 5px;cursor:pointer;}
+.g_tip h3{ font-size: 12px;}
+.g_tip .arrow{position:absolute;left:10px;top:-6px; width: 0; height: 0; line-height: 0; border-style: dashed dashed solid; border-color: transparent transparent #ffc; border-width: 0 6px 6px; overflow:hidden;}
+.g_valid{border-color:#e00 !important;}
+.g_placeholder{color:#808080 !important;}
+input,textarea{box-shadow:none;}
 input:-moz-placeholder{color:#808080;}
 input:-webkit-placeholder{color:#808080;}
 input:placeholder{color:#808080;}
+input::-ms-clear{display:none;}
+
 .box-reg{ width: 455px; margin: 0 auto; padding-top: 30px; color: @gray; font-size: 16px;
 	.t{ height: 70px;
 		.btn{ float: left; height: 38px; width: 208px; line-height: 38px; font-size: 16px; text-align: center; border: 2px solid #ddd; position: relative; color: @gray;}
