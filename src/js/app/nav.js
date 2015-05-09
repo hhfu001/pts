@@ -62,10 +62,7 @@ define(['tui/art', './login'], function(Art, Login, require, exports) {
 			Login.needLogin(function(){
 				location.reload();
 			});
-
-
-
-		})
+		});
 
 	};
 

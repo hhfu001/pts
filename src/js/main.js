@@ -1,4 +1,4 @@
-require(['app/nav', 'app/share', 'app/form', 'module/switchtab'], function(Nav, Share, Regform, Switchtab) {
+require(['app/nav', 'app/share', 'app/form', 'module/switchtab', 'app/login'], function(Nav, Share, Regform, Switchtab, Login) {
 	Nav.init({
 		disabled: false
 	});
@@ -100,5 +100,16 @@ require(['app/nav', 'app/share', 'app/form', 'module/switchtab'], function(Nav, 
 
 	Regform('.form-personal');
 	Regform('.form-enter');
+
+
+
+	$('.form-login').on('click', '.btn-login', function(e){
+		e.preventDefault();
+
+		Login.needLogin('.loginform', function(){
+
+		});
+	});
+
 
 });

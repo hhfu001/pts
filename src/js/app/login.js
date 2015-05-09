@@ -11,24 +11,30 @@ define([
 
 	function noop(){}
 
-	Login.needLogin = function(op, callback) {
-		if(typeof op === 'function'){
-			callback = op;
-			op = {};
+	Login.needLogin = function(node, callback) {
+		if(typeof node === 'function'){
+			callback = node;
+			node = null;
 		}else{
-			op = op || {};
+			node = node || null;
 		}
 
-		var dlg = new Dialog({
-			className : 'login_dialog',
-			content : loginArt({code: 123})
-		});
+		if(node){
+			var $content = $(node);
+		}else{
+			var dlg = new Dialog({
+				className : 'login_dialog',
+				content : loginArt({code: 123})
+			});
 
-		var $content = dlg.dom.content;
+			var $content = dlg.dom.content;	
+		}
+
+
 		var $form = $content.find('form');
-		var $tel = $form.find('.tel');
-		var $pwd = $form.find('.pwd');
-		var $code = $form.find('.codeipt');
+		var $tel = $form.find('[name=name]');
+		var $pwd = $form.find('[name=pwd]');
+		var $code = $form.find('[name=code]');
 
 		var h5form = new Html5form($form, Html5form.VALID_BLUR);
 		var params = {};

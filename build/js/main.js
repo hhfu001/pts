@@ -110,1695 +110,6 @@ define('tui/event', [
 
 });
 
-/* @source tui/scrollLoader.js */;
-
-﻿define('tui/scrollLoader', [], function() {
-
-	var win = $(window),
-		height = win.height(),
-		queue = [],
-		m = {
-			node: function(n, size) { //传入节点计算top值
-				n = $(n);
-				return this.y(n.offset() ? n.offset().top : 0, size ? n.outerHeight(true) : undefined);
-			},
-			y: function(py, ps) { //直接传入top值，第2个参数详见size，不设置时单向计算，只要在滚动条之上的都加载
-				this._y = py;
-				this._s = ps || 0;
-				return this;
-			},
-			threshold: function(th) { //传入节点计算top值
-				this._th = th;
-				return this;
-			},
-			size: function(s) { //设置size时会计算滚出区域情况，在可视区域之外都不加载
-				this._s = s;
-				return this;
-			},
-			delay: function(d) { //仅size时有效，延迟加载可是区域内，防止滚动条瞬间拖拽情况
-				this._d = d;
-				return this;
-			},
-			time: function(t) { //多少时间后加载器必定执行
-				var self = this;
-				self._t = t;
-				setTimeout(function() {
-					self.start();
-				}, t);
-				return self;
-			},
-			load: function() { //加载回调
-				this._cb = this._cb.concat(Array.prototype.slice.call(arguments, 0));
-				this._no && queue.push(this);
-				this._no = false;
-				this._f && this.fire();
-				this._f = false;
-				return this;
-			},
-			start: function() { //开始加载并清空加载器
-				this._enable && this._cb.forEach(function(cb) {
-					cb();
-				});
-				return this.cancel();
-			},
-			cancel: function() { //永久取消此次延迟加载
-				this.disable();
-				for(var i = 0, len = queue.length; i < len; i++) {
-					if(queue[i] == this) {
-						queue.splice(i, 1);
-						break;
-					}
-				}
-			},
-			enable: function() { //设置加载状态为可用
-				this._enable = true;
-				return this;
-			},
-			disable: function() { //设置加载状态为不可用
-				this._enable = false;
-				return this;
-			},
-			fire: function(top, he) { //手动尝试触发判断加载条件
-				top = top || win.scrollTop();
-				he = he || height;
-				var self = this;
-				if(self._s) {
-					clearTimeout(self._timeout);
-					self._timeout = setTimeout(function() {
-						if(self._enable
-							&& self._y <= (top + he + self._th)
-							&& (self._y + self._s) >= (top - self._th)
-						)
-							cb();
-					}, self._d);
-				}
-				else {
-					if(this._enable
-						&& this._y <= (top + he + this._th)
-					)
-						cb();
-				}
-				function cb() {
-					self._cb.forEach(function(cb) {
-						cb();
-					});
-					self.cancel();
-				}
-				return this;
-			}
-		},
-		Klass = function() {
-			this._y = 0; //y坐标值
-			this._th = 0; //偏移量
-			this._d = 0; //延迟
-			this._s = 0; //尺寸，等于0的时候不侦听尺寸，即滚动条区域以上直接加载；否则判断是否在显示范围内
-			this._cb = []; //回调
-			this._no = true; //是否被加入侦听
-			this._enable = true; //是否启用
-			this._timeout = null; //延迟侦听器
-			this._f = true; //首次调用状态，因为f5后一开始滚动条就有可能在下方，所以初期不onscroll也要调用
-		},
-		instance = {};
-	Klass.prototype = m;
-
-	function onScroll() {
-		var top = win.scrollTop();
-		queue.concat().forEach(function(o) {
-			o.fire(top, height);
-		});
-	}
-	win.bind('resize', function() {
-		height = win.height();
-		onScroll();
-	});
-	win.bind('scroll', onScroll);
-	
-	for(var i in m) {
-		(function(key) {
-			instance[key] = function() {
-				var obj = new Klass;
-				return obj[key].apply(obj, Array.prototype.slice.call(arguments, 0));
-			};
-		})(i);
-	}
-	return instance;
-
-});
-
-/* @source tui/lazyImageLoader.js */;
-
-/*
- * 基于TUI.scrollLoader 图片分段延后加载
- * 默认对加classname为lazyImg的img标签进行延后替换处理
- */
-define('tui/lazyImageLoader', [
-  "tui/scrollLoader"
-], function(scrollLoader){
-	var imgs, size, attr, zone = {};
-
-	function loadImage(op){
-		op = op || {};
-
-		size = op.size || 300;				// 图片分块区域大小
-		attr = op.attr || 'alt';			// x
-		imgs = op.imgs || $('img.lazyImg');	// 需要延后到图片对象
-
-		/*for (var i = 0, l = imgs.length; i < l; i++) {
-		 var img = imgs[i];
-		 var top = $(img).offset().top>0 ? $(img).offset().top : 0 || $(img).parents(':visible').offset().top || 0;
-		 // 图片按实际位置分段
-		 addToZone(top, img);
-		 }*/
-		var optZone = [];
-		imgs.each(function(){
-			var $el = $(this),
-				offset = $el.offset(),
-				top = offset.top > 0 ? offset.top : ($el.parents(':visible') && $el.parents(':visible').offset()) ? $el.parents(':visible').offset().top : 0;
-			addToZone(top, this, optZone);
-		});
-		for (var z in optZone) {
-			if (optZone.hasOwnProperty(z)) {
-				var images = $(optZone[z]);
-				images.each(function(){
-					var node = this;
-					scrollLoader.y(z).threshold(size).load(function(){
-						var _img = $(node);
-						_img.attr('src', _img.attr(attr));
-						_img.removeAttr(attr);
-						if (_img[0].className.indexOf('lazyImg') !== -1) {
-							_img.removeClass('lazyImg');
-						}
-					})
-
-				});
-			}
-		}
-	}
-
-	function addToZone(top, img, optZone){
-		top = top - top % size;
-		//zone[top] = zone[top] || [];
-		//zone[top].push(img);
-		optZone[top] = optZone[top] || [];
-		optZone[top].push(img);
-	}
-
-	return loadImage;
-});
-
-/* @source module/switchtab.js */;
-
-/**
- * 全站Tab切换、滚动Banner
- */
-define("module/switchtab", [
-  "tui/lazyImageLoader",
-  "tui/event"
-], function(LazyImageLoader, Event) {
-    /**
-     * jQuery Easing v1.3 - http://gsgd.co.uk/sandbox/jquery/easing/
-     * @note jQuery动画方法的缓冲效果
-     */
-    jQuery.easing['jswing'] = jQuery.easing['swing'];
-    jQuery.extend( jQuery.easing,{
-        // t: current time, b: begInnIng value, c: change In value, d: duration
-        easeInOutQuad: function (x, t, b, c, d) { //===easeInOutCubic
-            if ((t/=d/2) < 1) return c/2*t*t*t + b;
-            return c/2*((t-=2)*t*t + 2) + b;
-        }
-    });
-
-    function getTabIndex(obj){
-        if (obj && obj.tagName) {
-            var me = (obj.tagName.toLowerCase() == 'a') ? $(obj) : $(obj).find('a');
-            me = me.length ? me : $(obj);
-            return (me.attr('rel') || me.attr('href').replace(/.*#(\d+)$/, '$1') || 1) - 1;
-        } else {
-            return 0;
-        }
-    }
-
-    function clearTimer(timer){
-        var args = arguments;
-        for (var i = 0, l = args.length; i < l; i++) {
-            var timer = args[i];
-            if (timer) clearTimeout(timer);
-        }
-        return null;
-    }
-    
-    
-    var Klass = Event.extend({
-        initialize: function(op) {          
-            var self = this;
-            Klass.superClass.initialize.apply(self, arguments); 
-                
-            self.op = op || {};
-            self.op.slide = op.slide || false;
-            self.op.linktab = op.linktab || false;
-            self.op.clicktab = op.clicktab || false;
-            self.op.lazyContent = op.lazyContent || window.gLazyContent || false;           
-            
-            // 界面对象
-            var box = self.box = $(op.box);
-            var tab = self.tab = $(op.tab || '.tab li', box);
-            var panel = self.panel = $(op.panel || '.c', box);
-        
-            self.size = tab.length || panel.length;
-            self.loop = op.loop || 0;
-            self.current = getTabIndex(tab.filter('.current')[0]);
-    
-            // 横向滚动面板
-            if (self.op.slide) {
-                self.scroll = panel.parent().parent();
-                // 滚动位置归零
-                self.scroll.scrollLeft(0);
-                // 复制第一个拼接
-                LazyImageLoader({imgs: panel.eq(self.current).find('.lazyImg')});
-                panel.parent().append(panel.eq(0).clone());
-                self.panel = $(op.panel || '.c', box);
-                // 滚动参数设置
-                self.width = panel.width();
-                self.delay = op.delay || 700;
-                self.loop = (self.loop || 5000) + self.delay;
-                self.anilock = false;
-            }
-    
-            if (self.size < 2) return;
-    
-            // 可点击Tab
-            if (self.op.clicktab) {
-                tab.click(function(event){
-                    event.preventDefault();
-                    self.go(getTabIndex(this));
-                });
-            } else {
-                // 非带链接Tab
-                if (!self.op.linktab) {
-                    tab.click(function(event){ event.preventDefault() });
-                }
-                tab.mouseenter(function(){
-                    clearTimer(self.timer, self.looptimer);
-                    var me = this;
-                    self.timer = setTimeout(function(){
-                        self.go(getTabIndex(me));
-                    }, 30);
-                }).mouseleave(function(){
-                    clearTimer(self.timer, self.looptimer);
-                    self.start();
-                });
-            }
-    
-            // 循环切换
-            if (self.loop) {
-                self.check(self.op.clicktab ? tab : null);
-                self.start();
-            }
-
-
-            tab.parent().on('click', 'a', function(event){
-                var href = $(this).attr('href');
-
-                if( !href || href == '#' || href.length < 5){
-                    event.preventDefault();
-                    //return false;
-                }
-            });                 
-        },
-        
-        on: function(type, o){
-            this.box.eventProxy(type, o);
-            return this;
-        },
-
-        go: function(cur, auto){
-            var self = this;
-            cur = auto ? cur : Math.min(Math.max(cur, 0), self.size - 1);
-            self.trigger('before', [self.current, cur, self]);
-            if (self.op.slide) {
-                if (self.anilock) {
-                    self.nextstep = function(){ self.animate(cur, auto); };
-                    return;
-                }
-                self.animate(cur, auto);
-            } else {
-                var prev = self.current;
-                                
-                self.current = cur % self.size;
-                self.trigger('change', [self.current, self]);
-                self.tab.removeClass('current').eq(self.current).addClass('current');
-
-                var isFade = self.op.fade;
-                var panels = self.panel;
-                
-                isFade ? panels.eq(prev).stop().fadeOut(100): panels.hide();
-                
-                panels.eq(self.current)[isFade ? 'fadeIn' : 'show'](self.op.duration ? self.op.duration : '');
-                self.trigger('after', [self.current, self]);
-            }
-        },
-        prev: function(auto){
-            this.go(this.current - 1, auto);
-        },
-        next: function(auto){
-            this.go(this.current + 1, auto);
-        },
-        start: function(start){
-            var self = this;
-            if (self.loop) {
-                clearTimer(self.looptimer);
-                if (start) self.start();
-                self.looptimer = setTimeout(function(){
-                    self.start();
-                    self.next(true);
-                }, self.loop);
-            }
-        },
-        stop: function(){
-            clearTimer(this.looptimer);
-        },
-        check: function(obj){
-            var self = this;
-            (obj || self.panel).mouseenter(function(){
-                clearTimer(self.looptimer);
-            }).mouseleave(function(){
-                clearTimer(self.looptimer);
-                self.start();
-            });
-        },
-        animate: function(pos, auto){
-            var self = this;
-            var current = self.current;
-            if (self.anilock || current == pos) return;
-            clearTimer(self.looptimer);
-            var size = self.size, width = self.width, panel = self.panel, scroll = self.scroll;
-            var s = current > pos ? 0 : width;
-            var c = current > pos ? width : 0;
-            pos = pos % (auto ? size + 1 : size);
-            LazyImageLoader({imgs: panel.eq(pos).show().find('.lazyImg')});
-            
-            scroll.scrollLeft(c);
-            self.tab.removeClass('current').eq(pos % size).addClass('current');
-            scroll.animate({ scrollLeft: s }, self.delay, 'easeInOutQuad', function(){
-                panel.eq(current).hide();
-                if (auto && pos == size) {
-                    pos = pos % size;
-                    LazyImageLoader({imgs: panel.eq(0).show().find('.lazyImg')});
-                    panel.eq(size).hide();
-                }
-                scroll.scrollLeft(0);
-                self.current = pos;
-                self.anilock = false;
-                self.trigger('after', [self.current, self]);
-                if (self.nextstep) {
-                    self.nextstep();
-                    self.nextstep = null;
-                }
-                if (auto) {
-                    self.start();
-                }
-            });
-            self.anilock = true;
-        }       
-        });
-
-    
-    return Klass;
-});
-
-/* @source tui/art.js */;
-
-/*!
- * artTemplate - Template Engine
- * https://github.com/aui/artTemplate
- * Released under the MIT, BSD, and GPL Licenses
- */
-
-define('tui/art',[], function() {
-
-var global = window;
-
-/**
- * 模板引擎
- * 若第二个参数类型为 String 则执行 compile 方法, 否则执行 render 方法
- * @name    template
- * @param   {String}            模板ID
- * @param   {Object, String}    数据或者模板字符串
- * @return  {String, Function}  渲染好的HTML字符串或者渲染方法
- */
-var template = function (id, content) {
-    return template[
-        typeof content === 'string' ? 'compile' : 'render'
-    ].apply(template, arguments);
-};
-
-
-template.version = '2.0.2';
-template.openTag = '<%';     // 设置逻辑语法开始标签
-template.closeTag = '%>';    // 设置逻辑语法结束标签
-template.isEscape = true;    // HTML字符编码输出开关
-template.isCompress = false; // 剔除渲染后HTML多余的空白开关
-template.parser = null;      // 自定义语法插件接口
-
-
-
-/**
- * 渲染模板
- * @name    template.render
- * @param   {String}    模板ID
- * @param   {Object}    数据
- * @return  {String}    渲染好的HTML字符串
- */
-template.render = function (id, data) {
-
-    var cache = template.get(id) || _debug({
-        id: id,
-        name: 'Render Error',
-        message: 'No Template'
-    });
-
-    return cache(data);
-};
-
-
-
-/**
- * 编译模板
- * 2012-6-6 @TooBug: define 方法名改为 compile，与 Node Express 保持一致
- * @name    template.compile
- * @param   {String}    模板ID (可选，用作缓存索引)
- * @param   {String}    模板字符串
- * @return  {Function}  渲染方法
- */
-template.compile = function (id, source) {
-
-    var params = arguments;
-    var isDebug = params[2];
-    var anonymous = 'anonymous';
-
-    if (typeof source !== 'string') {
-        isDebug = params[1];
-        source = params[0];
-        id = anonymous;
-    }
-
-
-    try {
-
-        var Render = _compile(id, source, isDebug);
-
-    } catch (e) {
-
-        e.id = id || source;
-        e.name = 'Syntax Error';
-
-        return _debug(e);
-
-    }
-
-
-    function render (data) {
-
-        try {
-
-            return new Render(data, id) + '';
-
-        } catch (e) {
-
-            if (!isDebug) {
-                return template.compile(id, source, true)(data);
-            }
-
-            return _debug(e)();
-
-        }
-
-    }
-
-
-    render.prototype = Render.prototype;
-    render.toString = function () {
-        return Render.toString();
-    };
-
-
-    if (id !== anonymous) {
-        _cache[id] = render;
-    }
-
-
-    return render;
-
-};
-
-
-
-var _cache = template.cache = {};
-
-
-
-
-// 辅助方法集合
-var _helpers = template.helpers = (function () {
-
-    var toString = function (value, type) {
-
-        if (typeof value !== 'string') {
-
-            type = typeof value;
-            if (type === 'number') {
-                value += '';
-            } else if (type === 'function') {
-                value = toString(value.call(value));
-            } else {
-                value = '';
-            }
-        }
-
-        return value;
-
-    };
-
-
-    var escapeMap = {
-        "<": "&#60;",
-        ">": "&#62;",
-        '"': "&#34;",
-        "'": "&#39;",
-        "&": "&#38;"
-    };
-
-
-    var escapeHTML = function (content) {
-        return toString(content)
-        .replace(/&(?![\w#]+;|#\d+)|[<>"']/g, function (s) {
-            return escapeMap[s];
-        });
-    };
-
-
-    var isArray = Array.isArray || function (obj) {
-        return ({}).toString.call(obj) === '[object Array]';
-    };
-
-
-    var each = function (data, callback) {
-        if (isArray(data)) {
-            for (var i = 0, len = data.length; i < len; i++) {
-                callback.call(data, data[i], i, data);
-            }
-        } else {
-            for (i in data) {
-                callback.call(data, data[i], i);
-            }
-        }
-    };
-
-
-    return {
-
-        $include: template.render,
-
-        $string: toString,
-
-        $escape: escapeHTML,
-
-        $each: each
-
-    };
-})();
-
-
-
-
-/**
- * 添加模板辅助方法
- * @name    template.helper
- * @param   {String}    名称
- * @param   {Function}  方法
- */
-template.helper = function (name, helper) {
-    _helpers[name] = helper;
-};
-
-
-
-
-/**
- * 模板错误事件
- * @name    template.onerror
- * @event
- */
-template.onerror = function (e) {
-    var message = 'Template Error\n\n';
-    for (var name in e) {
-        message += '<' + name + '>\n' + e[name] + '\n\n';
-    }
-
-    if (global.console) {
-        console.error(message);
-    }
-};
-
-
-
-
-
-
-
-// 获取模板缓存
-template.get = function (id) {
-
-    var cache;
-
-    if (_cache.hasOwnProperty(id)) {
-        cache = _cache[id];
-    } else if ('document' in global) {
-        var elem = document.getElementById(id);
-
-        if (elem) {
-            var source = elem.value || elem.innerHTML;
-            cache = template.compile(id, source.replace(/^\s*|\s*$/g, ''));
-        }
-    }
-
-    return cache;
-};
-
-
-
-// 模板调试器
-var _debug = function (e) {
-
-    template.onerror(e);
-
-    return function () {
-        return '{Template Error}';
-    };
-};
-
-
-
-// 模板编译器
-var _compile = (function () {
-
-
-    // 数组迭代
-    var forEach = _helpers.$each;
-
-
-    // 静态分析模板变量
-    var KEYWORDS =
-        // 关键字
-        'break,case,catch,continue,debugger,default,delete,do,else,false'
-        + ',finally,for,function,if,in,instanceof,new,null,return,switch,this'
-        + ',throw,true,try,typeof,var,void,while,with'
-
-        // 保留字
-        + ',abstract,boolean,byte,char,class,const,double,enum,export,extends'
-        + ',final,float,goto,implements,import,int,interface,long,native'
-        + ',package,private,protected,public,short,static,super,synchronized'
-        + ',throws,transient,volatile'
-
-        // ECMA 5 - use strict
-        + ',arguments,let,yield'
-
-        + ',undefined';
-
-    var REMOVE_RE = /\/\*[\w\W]*?\*\/|\/\/[^\n]*\n|\/\/[^\n]*$|"(?:[^"\\]|\\[\w\W])*"|'(?:[^'\\]|\\[\w\W])*'|[\s\t\n]*\.[\s\t\n]*[$\w\.]+/g;
-    var SPLIT_RE = /[^\w$]+/g;
-    var KEYWORDS_RE = new RegExp(["\\b" + KEYWORDS.replace(/,/g, '\\b|\\b') + "\\b"].join('|'), 'g');
-    var NUMBER_RE = /^\d[^,]*|,\d[^,]*/g;
-    var BOUNDARY_RE = /^,+|,+$/g;
-
-    var getVariable = function (code) {
-        return code
-        .replace(REMOVE_RE, '')
-        .replace(SPLIT_RE, ',')
-        .replace(KEYWORDS_RE, '')
-        .replace(NUMBER_RE, '')
-        .replace(BOUNDARY_RE, '')
-        .split(/^$|,+/);
-    };
-
-
-    return function (id, source, isDebug) {
-
-        var openTag = template.openTag;
-        var closeTag = template.closeTag;
-        var parser = template.parser;
-
-
-        var code = source;
-        var tempCode = '';
-        var line = 1;
-        var uniq = {$data:1,$id:1,$helpers:1,$out:1,$line:1};
-        var prototype = {};
-
-
-        var variables = "var $helpers=this,"
-        + (isDebug ? "$line=0," : "");
-
-        var isNewEngine = ''.trim;// '__proto__' in {}
-        var replaces = isNewEngine
-        ? ["$out='';", "$out+=", ";", "$out"]
-        : ["$out=[];", "$out.push(", ");", "$out.join('')"];
-
-        var concat = isNewEngine
-            ? "if(content!==undefined){$out+=content;return content;}"
-            : "$out.push(content);";
-
-        var print = "function(content){" + concat + "}";
-
-        var include = "function(id,data){"
-        +     "data=data||$data;"
-        +     "var content=$helpers.$include(id,data,$id);"
-        +     concat
-        + "}";
-
-
-        // html与逻辑语法分离
-        forEach(code.split(openTag), function (code, i) {
-            code = code.split(closeTag);
-
-            var $0 = code[0];
-            var $1 = code[1];
-
-            // code: [html]
-            if (code.length === 1) {
-
-                tempCode += html($0);
-
-            // code: [logic, html]
-            } else {
-
-                tempCode += logic($0);
-
-                if ($1) {
-                    tempCode += html($1);
-                }
-            }
-
-
-        });
-
-
-
-        code = tempCode;
-
-
-        // 调试语句
-        if (isDebug) {
-            code = "try{" + code + "}catch(e){"
-            +       "throw {"
-            +           "id:$id,"
-            +           "name:'Render Error',"
-            +           "message:e.message,"
-            +           "line:$line,"
-            +           "source:" + stringify(source)
-            +           ".split(/\\n/)[$line-1].replace(/^[\\s\\t]+/,'')"
-            +       "};"
-            + "}";
-        }
-
-
-        code = variables + replaces[0] + code
-        + "return new String(" + replaces[3] + ");";
-
-
-        try {
-
-            var Render = new Function("$data", "$id", code);
-            Render.prototype = prototype;
-
-            return Render;
-
-        } catch (e) {
-            e.temp = "function anonymous($data,$id) {" + code + "}";
-            throw e;
-        }
-
-
-
-
-        // 处理 HTML 语句
-        function html (code) {
-
-            // 记录行号
-            line += code.split(/\n/).length - 1;
-
-            // 压缩多余空白与注释
-            if (template.isCompress) {
-                code = code
-                .replace(/[\n\r\t\s]+/g, ' ')
-                .replace(/<!--.*?-->/g, '');
-            }
-
-            if (code) {
-                code = replaces[1] + stringify(code) + replaces[2] + "\n";
-            }
-
-            return code;
-        }
-
-
-        // 处理逻辑语句
-        function logic (code) {
-
-            var thisLine = line;
-
-            if (parser) {
-
-                 // 语法转换插件钩子
-                code = parser(code);
-
-            } else if (isDebug) {
-
-                // 记录行号
-                code = code.replace(/\n/g, function () {
-                    line ++;
-                    return "$line=" + line +  ";";
-                });
-
-            }
-
-
-            // 输出语句. 转义: <%=value%> 不转义:<%==value%>
-            if (code.indexOf('=') === 0) {
-
-                var isEscape = code.indexOf('==') !== 0;
-
-                code = code.replace(/^=*|[\s;]*$/g, '');
-
-                if (isEscape && template.isEscape) {
-
-                    // 转义处理，但排除辅助方法
-                    var name = code.replace(/\s*\([^\)]+\)/, '');
-                    if (
-                        !_helpers.hasOwnProperty(name)
-                        && !/^(include|print)$/.test(name)
-                    ) {
-                        code = "$escape(" + code + ")";
-                    }
-
-                } else {
-                    code = "$string(" + code + ")";
-                }
-
-
-                code = replaces[1] + code + replaces[2];
-
-            }
-
-            if (isDebug) {
-                code = "$line=" + thisLine + ";" + code;
-            }
-
-            getKey(code);
-
-            return code + "\n";
-        }
-
-
-        // 提取模板中的变量名
-        function getKey (code) {
-
-            code = getVariable(code);
-
-            // 分词
-            forEach(code, function (name) {
-
-                // 除重
-                if (!uniq.hasOwnProperty(name)) {
-                    setValue(name);
-                    uniq[name] = true;
-                }
-
-            });
-
-        }
-
-
-        // 声明模板变量
-        // 赋值优先级:
-        // 内置特权方法(include, print) > 私有模板辅助方法 > 数据 > 公用模板辅助方法
-        function setValue (name) {
-
-            var value;
-
-            if (name === 'print') {
-
-                value = print;
-
-            } else if (name === 'include') {
-
-                prototype["$include"] = _helpers['$include'];
-                value = include;
-
-            } else {
-
-                value = "$data." + name;
-
-                if (_helpers.hasOwnProperty(name)) {
-
-                    prototype[name] = _helpers[name];
-
-                    if (name.indexOf('$') === 0) {
-                        value = "$helpers." + name;
-                    } else {
-                        value = value
-                        + "===undefined?$helpers." + name + ":" + value;
-                    }
-                }
-
-
-            }
-
-            variables += name + "=" + value + ",";
-        }
-
-
-        // 字符串转义
-        function stringify (code) {
-            return "'" + code
-            // 单引号与反斜杠转义
-            .replace(/('|\\)/g, '\\$1')
-            // 换行符转义(windows + linux)
-            .replace(/\r/g, '\\r')
-            .replace(/\n/g, '\\n') + "'";
-        }
-
-
-    };
-})();
-
-return template;
-
-});
-
-/* @source tui/drag.js */;
-
-
-define('tui/drag', [
-  "tui/event"
-], function(Event) {
-
-	var win = $(window);
-
-	function clearSelection() {
-		if(window.getSelection)
-			window.getSelection().removeAllRanges();
-		else if(document.selection)
-			document.selection.empty();
-		return this;
-	}
-
-    function selectListener(e){
-        e.preventDefault();
-    }
-
-	var Klass = Event.extend({
-		initialize : function(node, options) {
-			var self = this;
-			options = options || {};
-			var handler = options.handler || node;
-			Klass.superClass.initialize.call(self);
-            self.limit = options.limit;
-
-            self.bubble = options.bubble;
-            self.isCustom = options.isCustom;
-			self.enable2 = true;
-			self.state2 = false;
-			self.hasMove2 = false;
-			self.fx = self.fy = -1;
-			self.x2 = self.y2 = self.mx2 = self.my2 = self.px2 = self.py2 = self.cx2 = self.cy2 = 0;
-			self.node2 = $.type(node) == 'string' ? $(node) : node;
-			self.container2 = options.container || self.node2.parent();
-			self.fixed2 = self.node2.css('position').toLowerCase() == 'fixed';
-			self.handler2 = $.type(handler) == 'string' ? $(handler) : handler;
-
-			//init
-            var h = self.handler2 || self.node2;
-
-			function onDown(e) {
-				e.preventDefault();
-
-				if(!self.bubble || e.target == h[0]) {
-					self.start(e);
-					if (h[0].setCapture) {
-						h[0].setCapture();
-					}
-				}
-			}
-			h.bind('mousedown', onDown);
-			function onUp(e) {
-				//e.preventDefault();
-				if(self.state2) {
-					self.state2 = false;
-					var x = e.pageX - self.mx2 + self.x2 - self.px2,
-						y = e.pageY - self.my2 + self.y2 - self.py2;
-					if(self.fixed2) {
-						x -= win.scrollLeft();
-						y -= win.scrollTop();
-					}
-					if(self.limit) {
-                        x = Math.max(x, self.cx2 - self.px2);
-                        y = Math.max(y, self.cy2 - self.py2);
-                        x = Math.min(x, self.cWidth - (self.px2 - self.cx2) - self.dWidth);
-                        y = Math.min(y, self.cHeight - (self.py2 - self.cy2) - self.dHeight);
-					}
-					self.x2 = self.node2.offset().left;
-					self.y2 = self.node2.offset().top;
-					self.trigger('drag:end', [x, y, e.pageX, e.pageY, self.node2, self.container2]);
-				}
-				$(document).unbind('selectstart', selectListener);
-				if (h[0].releaseCapture) {
-					h[0].releaseCapture();
-				}
-			}
-			$(document).bind('mouseup', onUp);
-			function onMove(e) {
-				//e.preventDefault();
-				if(self.state2 && self.enable2) {
-					if(!self.hasMove() && e.pageX == self.fx && e.pageY == self.fy) {
-						//chrome下有几率发生尚未移动就触发了mousemove
-					} else {
-						self.hasMove2 = true;
-					}
-					var x = e.pageX - self.mx2 + self.x2 - self.px2,
-						y = e.pageY - self.my2 + self.y2 - self.py2;
-					if(self.fixed2) {
-						x -= win.scrollLeft();
-						y -= win.scrollTop();
-					}
-					if(self.limit) {
-                        x = Math.max(x, self.cx2 - self.px2);
-                        y = Math.max(y, self.cy2 - self.py2);
-                        x = Math.min(x, self.cWidth - (self.px2 - self.cx2) - self.dWidth);
-                        y = Math.min(y, self.cHeight - (self.py2 - self.cy2) - self.dHeight);
-					}
-					if (!self.isCustom) {
-						self.node2.css({
-							left: x,
-							top: y
-						});
-					}
-					//清理文本选中
-					clearSelection();
-					self.trigger('drag:move', [x, y, e.pageX, e.pageY, self.node2, self.container2]);
-				}
-			}
-			$(document).bind('mousemove', onMove);
-
-			//清除侦听方法，防止内存泄?
-			self.cancel = function() {
-				h.unbind('mousedown', onDown);
-				$(document).unbind('mouseup', onUp);
-				$(document).unbind('mousemove', onMove);
-			}
-		},
-		start: function(e) {
-			var self = this;
-			$(document).bind('selectstart', selectListener);
-			
-			self.offsetParent2 = self.node2.offsetParent();
-			
-            if (self.limit) {
-                self.cWidth = self.container2.outerWidth();
-                self.cHeight = self.container2.outerHeight();
-				self.pWidth = self.offsetParent2.outerWidth();
-                self.pHeight = self.offsetParent2.outerHeight();
-                self.dWidth = self.node2.outerWidth();
-                self.dHeight = self.node2.outerHeight();
-            }
-
-			self.fx = e.pageX;
-			self.fy = e.pageY;
-			self.cx2 = self.container2.offset().left;
-			self.cy2 = self.container2.offset().top;
-			self.px2 = self.offsetParent2.offset().left;
-			self.py2 = self.offsetParent2.offset().top;
-			self.x2 = self.node2.offset().left;
-			self.y2 = self.node2.offset().top;
-			self.mx2 = e.pageX;
-			self.my2 = e.pageY;
-			self.state2 = true;
-			self.trigger('drag:start', [self.x2, self.y2, e.pageX, e.pageY, self.node2, self.container2]);
-			return this;
-		},
-		enable: function() {
-			this.enable2 = true;
-			return this;
-		},
-		disable: function() {
-			this.enable2 = false;
-			return this;
-		},
-		state: function() {
-			return this.state2;
-		},
-		hasMove: function() {
-			return this.hasMove2;
-		}
-	});
-
-	return Klass;
-});
-
-/* @source tui/widget.js */;
-
-
-define('tui/widget', [
-  "tui/event",
-  "tui/art"
-], function(Event, Art) {
-
-	// 分割 event key
-	function splitEventKey(eventKey, defaultEventType) {
-		var type;
-		var selector;
-		var arr = eventKey.split(' ');
-		if (arr.length == 1) {
-			type = defaultEventType;
-			selector = eventKey;
-		} else {
-			type = arr.shift();
-			selector = arr.join(' ');
-		}
-		return [type, selector];
-	}
-
-	var Widget = Event.extend({
-		// 与 widget 关联的 DOM 元素 (jQuery对象)
-		element : null,
-		// 默认模板
-		template : '<div></div>',
-		// 默认事件类型
-		eventType : 'click',
-		// 默认数据
-		model : {},
-		// 事件代理，格式为：
-		// {
-		//     'mousedown .title': 'edit',
-		//     'click .open': function(ev) { ... }
-		// }
-		events : {},
-		// 组件的定位节点 (jQuery对象)
-		targetNode : $(document.body),
-		// 渲染方法，"append","prepend","before","after","replaceWith"
-		renderMethod : 'append',
-		// 构造方法
-		initialize : function(config) {
-			var self = this;
-			config = config || {};
-			Widget.superClass.initialize.call(self);
-
-			self.model = $.extend(true, {}, self.model);
-			self.events = $.extend(true, {}, self.events);
-
-			$.each(['element', 'targetNode'], function() {
-				(typeof config[this] !== 'undefined') && (self[this] = $(config[this]));
-			});
-
-			$.each(['template', 'eventType', 'renderMethod'], function() {
-				(typeof config[this] !== 'undefined') && (self[this] = config[this]);
-			});
-
-			$.each(['model', 'events'], function() {
-				(typeof config[this] !== 'undefined') && $.extend(self[this], config[this]);
-			});
-		},
-
-		// 在 this.element 内寻找匹配节点
-		find : function(selector) {
-			return this.element.find(selector);
-		},
-
-		// 注册事件代理
-		delegate : function(events, handler) {
-			var self = this;
-			// 允许使用：widget.delegate('click p', function(ev) { ... })
-			if ($.type(events) == 'string' && $.isFunction(handler)) {
-				var obj = {};
-				obj[events] = handler;
-				events = obj;
-			}
-			// key 为 'event selector'
-			$.each(events, function(key, val) {
-				var callback = function(e) {
-					if ($.isFunction(val)) {
-						return val.call(self, e);
-					} else {
-						return self[val](e);
-					}
-				};
-				var arr = splitEventKey(key, self.eventType);
-				self.element.on(arr[0], arr[1], callback);
-			});
-			return self;
-		},
-
-		// 卸载事件代理
-		undelegate : function(eventKey) {
-			var self = this;
-			// key 为 'event selector'
-			var arr = splitEventKey(eventKey, self.eventType);
-			self.element.off(arr[0], arr[1]);
-			return self;
-		},
-
-		// 将 widget 渲染到页面上
-		render : function(model) {
-			var self = this;
-
-			if (!self.element || !self.element[0]) {
-				// self.element = $(Template.convertTpl(self.template, $.extend({getUrl: this.getUrl || getUrl}, model || self.model)));
-				self.element = $(Art.compile(self.template)($.extend({getUrl: this.getUrl || getUrl}, model || self.model)));
-			}
-
-			self.delegate(self.events);
-
-			if (self.renderMethod) {
-				self.targetNode[self.renderMethod](self.element);
-			}
-
-			self.trigger('render:success', []);
-			return self;
-		},
-		update: function(data){
-			if (this.renderMethod) {
-				// this.targetNode[this.renderMethod](Template.convertTpl(this.template, $.extend({getUrl: this.getUrl || getUrl}, data)));
-				this.targetNode[this.renderMethod](Art.compile(this.template)($.extend({getUrl: this.getUrl || getUrl}, data)));
-				self.trigger('update:success', []);
-			}
-		}
-	});
-	
-	function getUrl(url){
-		return url;
-	}
-	
-	return Widget;
-
-});
-
-/* @source tui/mask.js */;
-
-
-define('tui/mask', [], function() {
-	var $node = $('<div class="tui_mask">');
-	var init;
-	var $win = $(window);
-	var $doc = $(document);
-	var $body = $(document.body);
-	var ie6 = $.browser.msie && $.browser.version < 7;
-	var ieMaxHeight = 4096;
-
-	function cb() {
-		var width = Math.max($win.width(), $doc.width());
-		var height = Math.max($win.height(), $doc.height());
-		var position = 'absolute';
-		var top = 0;
-
-		// Bugfix: http://jira.intra.tudou.com/browse/FLASH-3072
-		if ($.browser.msie && height > ieMaxHeight) {
-			if (!ie6) {
-				position = 'fixed';
-			} else {
-				top = $win.scrollTop();
-				if (top + ieMaxHeight > height) {
-					top = height - ieMaxHeight;
-				}
-			}
-			height = ieMaxHeight;
-		}
-
-		$node.css({
-			position : position,
-			top : top,
-			width: width,
-			height: height
-		});
-	}
-
-	return {
-		node: function() {
-			return $node;
-		},
-		resize: function() {
-			cb();
-		},
-		show: function(zIndex) {
-			$win.bind('resize', cb);
-			if (ie6) {
-				$win.bind('scroll', cb);
-			}
-			$node.css('z-index', zIndex || 90000);
-			this.resize();
-			if(!init) {
-				$body.append($node);
-				init = true;
-			}
-			else
-				$node.show();
-			return this;
-		},
-		hide: function(remove) {
-			$win.unbind('resize', cb);
-			if (ie6) {
-				$win.unbind('scroll', cb);
-			}
-			if(remove) {
-				$node.remove();
-				init = false;
-			}
-			else
-				$node.hide();
-			return this;
-		},
-		update: function() {
-			cb();
-		},
-		state: function() {
-			return $node.is(':visible');
-		}
-	};
-});
-
-/* @source tui/browser.js */;
-
-
-define('tui/browser', [], function() {
-
-	var userAgent = navigator.userAgent.toLowerCase();
-
-	// userAgent = 'Mozilla/5.0 (iPod; CPU iPhone OS 6_0_1 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Mobile/10A523'.toLowerCase();
-	// userAgent = 'Mozilla/5.0 (Linux; U; Android 4.0.3; zh-cn; N12 Build/IML74K) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Safari/534.30'.toLowerCase();
-	// userAgent = 'Mozilla/5.0 (compatible; MSIE 9.0; Windows Phone OS 7.5; Trident/5.0; IEMobile/9.0; NOKIA; Nokia 710)'.toLowerCase();
-	// userAgent = 'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0; Touch)';
-
-	var browserUA = {
-		ie6 : $.browser.msie && $.browser.version == 6.0,
-		// html5相关特性
-		html5: function(){
-			var input = document.createElement('input');
-			var video = document.createElement('video');
-			return {
-				// 支持video标签，支持h264
-				'h264': !!(video.canPlayType && video.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"').replace(/no/, '')),
-				'history': !!(window.history && window.history.pushState && window.history.popState),
-				'placeholder': "placeholder" in input
-			};
-		},
-		//语言特性
-		lang: (navigator.language || navigator.systemLanguage).toLowerCase(),
-		iOS: (userAgent.match(/(ipad|iphone|ipod)/) || [])[0],
-		iOSVersion: (userAgent.match(/os\s+([\d_]+)\s+like\s+mac\s+os/) || [0,'0_0_0'])[1].split('_'),
-		wphone: parseFloat((userAgent.match(/windows\sphone\s(?:os\s)?([\d.]+)/) || ['','0'])[1]),
-		android: parseFloat((userAgent.match(/android[\s|\/]([\d.]+)/) || ['','0'])[1])
-
-	};
-
-	// 检测UA及设备陀螺仪旋转值判断是否为移动设备
-	browserUA.isMobile = !!browserUA.iOS || !!browserUA.wphone || !!browserUA.android || (window.orientation !== undefined) || false;
-
-	// 检测移动设备是否为平板
-	browserUA.isPad = browserUA.isMobile && (browserUA.iOS == 'ipad' || userAgent.indexOf('mobile') == -1 || (userAgent.indexOf('windows nt') != -1 && userAgent.indexOf('touch') != -1)) || false;
-
-	return browserUA;
-});
-
-/* @source tui/dialog.js */;
-
-
-define('tui/dialog', [
-  "tui/browser",
-  "tui/art",
-  "tui/mask",
-  "tui/widget",
-  "tui/drag"
-], function(Browser, Art, Mask, Widget, Drag) {
-
-	var win = $(window);
-
-	var ie67 = ($.browser.msie && $.browser.version <= 7) || !$.support.boxModel;
-
-	var zIndex = 10002;
-
-	var buttonsTemplate = '<div class="tui_dialog_button"><% for (var i = 0; i < buttons.length; i++) { %>'
-		+ '<a data-role="button_<%=i%>" href="#" <%if(buttons[i].className){%>class="<%=buttons[i].className%>"<%}%>><%=buttons[i].name%></a>'
-		+ '<% } %></div>';
-
-	var template = '<div class="tui_dialog <%=className%>"><div<% if (hasWrap) { %> class="tui_dialog_wrap"<% } %>><div class="tui_dialog_holder" data-role="holder">'
-		+ '<div class="tui_dialog_resize"></div>'
-		+ '<div class="tui_dialog_w_tp"></div><div class="tui_dialog_w_bm"></div>'
-		+ '<div class="tui_dialog_w_lf"></div><div class="tui_dialog_w_rt"></div>'
-		+ '<div class="tui_dialog_w_tl"></div><div class="tui_dialog_w_tr"></div>'
-		+ '<div class="tui_dialog_w_bl"></div><div class="tui_dialog_w_br"></div>'
-		+ '<div class="tui_dialog_header" data-role="header"><span class="tui_dialog_close" data-role="close" title="关闭">X</span>'
-		+ '<div class="tui_dialog_title" data-role="title"><%=title%></div><div class="tui_dialog_bar"><%=bar%></div></div>'
-		+ '<div class="tui_dialog_content" data-role="content"></div>'
-		+ '<% if (buttons.length > 0) { %><div class="tui_dialog_footer" data-role="footer">' + buttonsTemplate + '</div><% } %>'
-		+ '<% if (info) { %><div class="tui_dialog_info"><%=info%></div><% } %>'
-		+ '</div></div></div>';
-
-	var Dialog = Widget.extend({
-		// 事件代理
-		events : {
-			'click [data-role=close]' : function(e) {
-				e.preventDefault();
-				this.close();
-			}
-		},
-		// 构造方法
-		initialize : function(config) {
-			var self = this;
-
-			var defaults = {
-				template : template,
-				buttons : [],
-				zIndex : zIndex,
-				hasDrag : true,
-				hasMask : true,
-				isFixed : true
-			};
-
-			config = $.extend(defaults, config || {});
-
-			zIndex = config.zIndex;
-
-			var hasWrap = $.browser.msie && parseFloat($.browser.version) < 9;
-			if (typeof config.hasWrap != 'undefined') {
-				hasWrap = config.hasWrap;
-			}
-
-			var data = {
-				hasWrap : hasWrap,
-				className : config.className || 'tudou_dialog',
-				title : config.title || '',
-				bar : config.bar || '',
-				info : config.info || '',
-				buttons : config.buttons
-			};
-			config.element = $(Art.compile(config.template)(data));
-
-			Dialog.superClass.initialize.call(this, config);
-
-			self.dom = {
-				holder : self.element.find('[data-role=holder]'),
-				header : self.element.find('[data-role=header]'),
-				title : self.element.find('[data-role=title]'),
-				content : self.element.find('[data-role=content]'),
-				footer : self.element.find('[data-role=footer]'),
-				close : self.element.find('[data-role=close]')
-			};
-
-			self.config = config;
-
-			self.open();
-
-			var keyDownCallBack = function(e){
-				if(e.keyCode == 27){ // Esc
-					self.close();
-					$(document).unbind('keydown', keyDownCallBack);
-				}
-			}
-			$(document).keydown(keyDownCallBack);
-		},
-		title : function(html) {
-			this.dom.title.html(html);
-			return this;
-		},
-		content : function(html) {
-			this.dom.content.html(html);
-			return this;
-		},
-		open : function() {
-			var self = this;
-			var config = self.config;
-			var element = self.element;
-			var dom = self.dom;
-
-			// 设置面板层叠索引值
-			element.css('z-index', zIndex);
-			zIndex += 2;
-
-			if (config.hasMask) {
-				Mask.show(element.css('z-index') - 1);
-			}
-
-			element.css('position', (ie67 || !config.isFixed) ? 'absolute' : 'fixed');
-
-			self.iframeMask = $('<iframe>', {
-				src: "about:blank",
-				frameborder: 0,
-				css: {
-					border : 'none',
-					'z-index' : -1,
-					position : 'absolute',
-					top : 0,
-					left : 0,
-					width : '100%',
-					height : '100%'
-				}
-			}).prependTo(dom.holder);
-
-			// dom生成后再写入内容，防止内容中的flash被重置
-			self.content(config.content || '');
-
-			$.each(config.buttons, function(i) {
-				self.events['[data-role=button_' + i + ']'] = this.callback;
-			});
-
-			if (!self.element.parent()[0]) {
-				self.render();
-			}
-
-			self.element.show();
-
-			self.locate();
-
-			self.resizeLocate = function(e) {
-				self.locate();
-			};
-			win.bind('resize', self.resizeLocate);
-
-			if (ie67 && config.isFixed) {
-				self.iefixScroll = function(e) {
-					self.locate();
-				};
-				win.bind('scroll', self.iefixScroll);
-
-				self.iframeMask.css({
-					height: dom.holder.height()
-				});
-			}
-
-			if (self.config.hasDrag) {
-				new Drag(element, {
-					handler : dom.header,
-					limit : true
-				});
-			}
-
-			return self;
-		},
-		close : function(isHide) {
-			var self = this;
-
-			if (self.config.hasMask) {
-				Mask.hide(true);
-			}
-
-			self.trigger('close', [self]);
-
-			if(!isHide) {
-				self.element.find('iframe').remove();
-			}
-			self.element[isHide ? 'hide' : 'remove']();
-
-			if (self.resizeLocate) {
-				win.unbind('resize', self.resizeLocate);
-			}
-
-			if (self.iefixScroll) {
-				win.unbind('scroll', self.iefixScroll);
-				self.iefixScroll = null;
-			}
-
-			return self;
-		},
-		locate: function() {
-			var self = this;
-			var left = Math.max(0, (win.width() - self.element.width()) >> 1);
-            if (!self.config.isFixed) {
-                var top = win.scrollTop() + (win.height() - self.element.height()) / 2;
-            } else {
-                var top = (Math.max(0, (win.height() - self.element.height()) >> 1)) + (ie67 ? win.scrollTop() : 0);
-            }
-			self.element.css({
-				left : left,
-				top : top
-			});
-			return self;
-		}
-	});
-
-	Dialog.confirm = function(msg, callback) {
-		var op = {};
-		if ($.isPlainObject(msg)) {
-			op = msg;
-			msg = op.msg;
-			callback = op.callback;
-		}
-		return new Dialog($.extend({
-			className: 'tudou_dialog alert',
-			title: '提示',
-			content: '<div class="tui_dialog_text">' + msg + '</div>',
-			hasMask: true,
-			buttons: [{
-				name: '确定',
-				callback: function(e){
-					e.preventDefault();
-					callback && callback.call(this);
-					this.close();
-				}
-			}, {
-				name: '取消',
-				callback: function(e){
-					e.preventDefault();
-					this.close();
-				}
-			}]
-		}, op));
-	};
-
-	Dialog.alert = function(msg, callback) {
-		var op = {};
-		if ($.isPlainObject(msg)) {
-			op = msg;
-			msg = op.msg;
-			callback = op.callback;
-		}
-		return new Dialog($.extend({
-			className: 'tudou_dialog alert',
-			title: '提示',
-			content: '<div class="tui_dialog_text">' + msg + '</div>',
-			hasMask: true,
-			buttons: [{
-				name: '确定',
-				callback: function(e){
-					e.preventDefault();
-					callback && callback.call(this);
-					this.close();
-				}
-			}]
-		}, op));
-	};
-
-	return Dialog;
-});
-
 /* @source tui/placeholder.js */;
 
 define('tui/placeholder', [
@@ -2464,6 +775,1807 @@ define('tui/html5form', [
 	return Klass;
 });
 
+/* @source tui/drag.js */;
+
+
+define('tui/drag', [
+  "tui/event"
+], function(Event) {
+
+	var win = $(window);
+
+	function clearSelection() {
+		if(window.getSelection)
+			window.getSelection().removeAllRanges();
+		else if(document.selection)
+			document.selection.empty();
+		return this;
+	}
+
+    function selectListener(e){
+        e.preventDefault();
+    }
+
+	var Klass = Event.extend({
+		initialize : function(node, options) {
+			var self = this;
+			options = options || {};
+			var handler = options.handler || node;
+			Klass.superClass.initialize.call(self);
+            self.limit = options.limit;
+
+            self.bubble = options.bubble;
+            self.isCustom = options.isCustom;
+			self.enable2 = true;
+			self.state2 = false;
+			self.hasMove2 = false;
+			self.fx = self.fy = -1;
+			self.x2 = self.y2 = self.mx2 = self.my2 = self.px2 = self.py2 = self.cx2 = self.cy2 = 0;
+			self.node2 = $.type(node) == 'string' ? $(node) : node;
+			self.container2 = options.container || self.node2.parent();
+			self.fixed2 = self.node2.css('position').toLowerCase() == 'fixed';
+			self.handler2 = $.type(handler) == 'string' ? $(handler) : handler;
+
+			//init
+            var h = self.handler2 || self.node2;
+
+			function onDown(e) {
+				e.preventDefault();
+
+				if(!self.bubble || e.target == h[0]) {
+					self.start(e);
+					if (h[0].setCapture) {
+						h[0].setCapture();
+					}
+				}
+			}
+			h.bind('mousedown', onDown);
+			function onUp(e) {
+				//e.preventDefault();
+				if(self.state2) {
+					self.state2 = false;
+					var x = e.pageX - self.mx2 + self.x2 - self.px2,
+						y = e.pageY - self.my2 + self.y2 - self.py2;
+					if(self.fixed2) {
+						x -= win.scrollLeft();
+						y -= win.scrollTop();
+					}
+					if(self.limit) {
+                        x = Math.max(x, self.cx2 - self.px2);
+                        y = Math.max(y, self.cy2 - self.py2);
+                        x = Math.min(x, self.cWidth - (self.px2 - self.cx2) - self.dWidth);
+                        y = Math.min(y, self.cHeight - (self.py2 - self.cy2) - self.dHeight);
+					}
+					self.x2 = self.node2.offset().left;
+					self.y2 = self.node2.offset().top;
+					self.trigger('drag:end', [x, y, e.pageX, e.pageY, self.node2, self.container2]);
+				}
+				$(document).unbind('selectstart', selectListener);
+				if (h[0].releaseCapture) {
+					h[0].releaseCapture();
+				}
+			}
+			$(document).bind('mouseup', onUp);
+			function onMove(e) {
+				//e.preventDefault();
+				if(self.state2 && self.enable2) {
+					if(!self.hasMove() && e.pageX == self.fx && e.pageY == self.fy) {
+						//chrome下有几率发生尚未移动就触发了mousemove
+					} else {
+						self.hasMove2 = true;
+					}
+					var x = e.pageX - self.mx2 + self.x2 - self.px2,
+						y = e.pageY - self.my2 + self.y2 - self.py2;
+					if(self.fixed2) {
+						x -= win.scrollLeft();
+						y -= win.scrollTop();
+					}
+					if(self.limit) {
+                        x = Math.max(x, self.cx2 - self.px2);
+                        y = Math.max(y, self.cy2 - self.py2);
+                        x = Math.min(x, self.cWidth - (self.px2 - self.cx2) - self.dWidth);
+                        y = Math.min(y, self.cHeight - (self.py2 - self.cy2) - self.dHeight);
+					}
+					if (!self.isCustom) {
+						self.node2.css({
+							left: x,
+							top: y
+						});
+					}
+					//清理文本选中
+					clearSelection();
+					self.trigger('drag:move', [x, y, e.pageX, e.pageY, self.node2, self.container2]);
+				}
+			}
+			$(document).bind('mousemove', onMove);
+
+			//清除侦听方法，防止内存泄?
+			self.cancel = function() {
+				h.unbind('mousedown', onDown);
+				$(document).unbind('mouseup', onUp);
+				$(document).unbind('mousemove', onMove);
+			}
+		},
+		start: function(e) {
+			var self = this;
+			$(document).bind('selectstart', selectListener);
+			
+			self.offsetParent2 = self.node2.offsetParent();
+			
+            if (self.limit) {
+                self.cWidth = self.container2.outerWidth();
+                self.cHeight = self.container2.outerHeight();
+				self.pWidth = self.offsetParent2.outerWidth();
+                self.pHeight = self.offsetParent2.outerHeight();
+                self.dWidth = self.node2.outerWidth();
+                self.dHeight = self.node2.outerHeight();
+            }
+
+			self.fx = e.pageX;
+			self.fy = e.pageY;
+			self.cx2 = self.container2.offset().left;
+			self.cy2 = self.container2.offset().top;
+			self.px2 = self.offsetParent2.offset().left;
+			self.py2 = self.offsetParent2.offset().top;
+			self.x2 = self.node2.offset().left;
+			self.y2 = self.node2.offset().top;
+			self.mx2 = e.pageX;
+			self.my2 = e.pageY;
+			self.state2 = true;
+			self.trigger('drag:start', [self.x2, self.y2, e.pageX, e.pageY, self.node2, self.container2]);
+			return this;
+		},
+		enable: function() {
+			this.enable2 = true;
+			return this;
+		},
+		disable: function() {
+			this.enable2 = false;
+			return this;
+		},
+		state: function() {
+			return this.state2;
+		},
+		hasMove: function() {
+			return this.hasMove2;
+		}
+	});
+
+	return Klass;
+});
+
+/* @source tui/art.js */;
+
+/*!
+ * artTemplate - Template Engine
+ * https://github.com/aui/artTemplate
+ * Released under the MIT, BSD, and GPL Licenses
+ */
+
+define('tui/art',[], function() {
+
+var global = window;
+
+/**
+ * 模板引擎
+ * 若第二个参数类型为 String 则执行 compile 方法, 否则执行 render 方法
+ * @name    template
+ * @param   {String}            模板ID
+ * @param   {Object, String}    数据或者模板字符串
+ * @return  {String, Function}  渲染好的HTML字符串或者渲染方法
+ */
+var template = function (id, content) {
+    return template[
+        typeof content === 'string' ? 'compile' : 'render'
+    ].apply(template, arguments);
+};
+
+
+template.version = '2.0.2';
+template.openTag = '<%';     // 设置逻辑语法开始标签
+template.closeTag = '%>';    // 设置逻辑语法结束标签
+template.isEscape = true;    // HTML字符编码输出开关
+template.isCompress = false; // 剔除渲染后HTML多余的空白开关
+template.parser = null;      // 自定义语法插件接口
+
+
+
+/**
+ * 渲染模板
+ * @name    template.render
+ * @param   {String}    模板ID
+ * @param   {Object}    数据
+ * @return  {String}    渲染好的HTML字符串
+ */
+template.render = function (id, data) {
+
+    var cache = template.get(id) || _debug({
+        id: id,
+        name: 'Render Error',
+        message: 'No Template'
+    });
+
+    return cache(data);
+};
+
+
+
+/**
+ * 编译模板
+ * 2012-6-6 @TooBug: define 方法名改为 compile，与 Node Express 保持一致
+ * @name    template.compile
+ * @param   {String}    模板ID (可选，用作缓存索引)
+ * @param   {String}    模板字符串
+ * @return  {Function}  渲染方法
+ */
+template.compile = function (id, source) {
+
+    var params = arguments;
+    var isDebug = params[2];
+    var anonymous = 'anonymous';
+
+    if (typeof source !== 'string') {
+        isDebug = params[1];
+        source = params[0];
+        id = anonymous;
+    }
+
+
+    try {
+
+        var Render = _compile(id, source, isDebug);
+
+    } catch (e) {
+
+        e.id = id || source;
+        e.name = 'Syntax Error';
+
+        return _debug(e);
+
+    }
+
+
+    function render (data) {
+
+        try {
+
+            return new Render(data, id) + '';
+
+        } catch (e) {
+
+            if (!isDebug) {
+                return template.compile(id, source, true)(data);
+            }
+
+            return _debug(e)();
+
+        }
+
+    }
+
+
+    render.prototype = Render.prototype;
+    render.toString = function () {
+        return Render.toString();
+    };
+
+
+    if (id !== anonymous) {
+        _cache[id] = render;
+    }
+
+
+    return render;
+
+};
+
+
+
+var _cache = template.cache = {};
+
+
+
+
+// 辅助方法集合
+var _helpers = template.helpers = (function () {
+
+    var toString = function (value, type) {
+
+        if (typeof value !== 'string') {
+
+            type = typeof value;
+            if (type === 'number') {
+                value += '';
+            } else if (type === 'function') {
+                value = toString(value.call(value));
+            } else {
+                value = '';
+            }
+        }
+
+        return value;
+
+    };
+
+
+    var escapeMap = {
+        "<": "&#60;",
+        ">": "&#62;",
+        '"': "&#34;",
+        "'": "&#39;",
+        "&": "&#38;"
+    };
+
+
+    var escapeHTML = function (content) {
+        return toString(content)
+        .replace(/&(?![\w#]+;|#\d+)|[<>"']/g, function (s) {
+            return escapeMap[s];
+        });
+    };
+
+
+    var isArray = Array.isArray || function (obj) {
+        return ({}).toString.call(obj) === '[object Array]';
+    };
+
+
+    var each = function (data, callback) {
+        if (isArray(data)) {
+            for (var i = 0, len = data.length; i < len; i++) {
+                callback.call(data, data[i], i, data);
+            }
+        } else {
+            for (i in data) {
+                callback.call(data, data[i], i);
+            }
+        }
+    };
+
+
+    return {
+
+        $include: template.render,
+
+        $string: toString,
+
+        $escape: escapeHTML,
+
+        $each: each
+
+    };
+})();
+
+
+
+
+/**
+ * 添加模板辅助方法
+ * @name    template.helper
+ * @param   {String}    名称
+ * @param   {Function}  方法
+ */
+template.helper = function (name, helper) {
+    _helpers[name] = helper;
+};
+
+
+
+
+/**
+ * 模板错误事件
+ * @name    template.onerror
+ * @event
+ */
+template.onerror = function (e) {
+    var message = 'Template Error\n\n';
+    for (var name in e) {
+        message += '<' + name + '>\n' + e[name] + '\n\n';
+    }
+
+    if (global.console) {
+        console.error(message);
+    }
+};
+
+
+
+
+
+
+
+// 获取模板缓存
+template.get = function (id) {
+
+    var cache;
+
+    if (_cache.hasOwnProperty(id)) {
+        cache = _cache[id];
+    } else if ('document' in global) {
+        var elem = document.getElementById(id);
+
+        if (elem) {
+            var source = elem.value || elem.innerHTML;
+            cache = template.compile(id, source.replace(/^\s*|\s*$/g, ''));
+        }
+    }
+
+    return cache;
+};
+
+
+
+// 模板调试器
+var _debug = function (e) {
+
+    template.onerror(e);
+
+    return function () {
+        return '{Template Error}';
+    };
+};
+
+
+
+// 模板编译器
+var _compile = (function () {
+
+
+    // 数组迭代
+    var forEach = _helpers.$each;
+
+
+    // 静态分析模板变量
+    var KEYWORDS =
+        // 关键字
+        'break,case,catch,continue,debugger,default,delete,do,else,false'
+        + ',finally,for,function,if,in,instanceof,new,null,return,switch,this'
+        + ',throw,true,try,typeof,var,void,while,with'
+
+        // 保留字
+        + ',abstract,boolean,byte,char,class,const,double,enum,export,extends'
+        + ',final,float,goto,implements,import,int,interface,long,native'
+        + ',package,private,protected,public,short,static,super,synchronized'
+        + ',throws,transient,volatile'
+
+        // ECMA 5 - use strict
+        + ',arguments,let,yield'
+
+        + ',undefined';
+
+    var REMOVE_RE = /\/\*[\w\W]*?\*\/|\/\/[^\n]*\n|\/\/[^\n]*$|"(?:[^"\\]|\\[\w\W])*"|'(?:[^'\\]|\\[\w\W])*'|[\s\t\n]*\.[\s\t\n]*[$\w\.]+/g;
+    var SPLIT_RE = /[^\w$]+/g;
+    var KEYWORDS_RE = new RegExp(["\\b" + KEYWORDS.replace(/,/g, '\\b|\\b') + "\\b"].join('|'), 'g');
+    var NUMBER_RE = /^\d[^,]*|,\d[^,]*/g;
+    var BOUNDARY_RE = /^,+|,+$/g;
+
+    var getVariable = function (code) {
+        return code
+        .replace(REMOVE_RE, '')
+        .replace(SPLIT_RE, ',')
+        .replace(KEYWORDS_RE, '')
+        .replace(NUMBER_RE, '')
+        .replace(BOUNDARY_RE, '')
+        .split(/^$|,+/);
+    };
+
+
+    return function (id, source, isDebug) {
+
+        var openTag = template.openTag;
+        var closeTag = template.closeTag;
+        var parser = template.parser;
+
+
+        var code = source;
+        var tempCode = '';
+        var line = 1;
+        var uniq = {$data:1,$id:1,$helpers:1,$out:1,$line:1};
+        var prototype = {};
+
+
+        var variables = "var $helpers=this,"
+        + (isDebug ? "$line=0," : "");
+
+        var isNewEngine = ''.trim;// '__proto__' in {}
+        var replaces = isNewEngine
+        ? ["$out='';", "$out+=", ";", "$out"]
+        : ["$out=[];", "$out.push(", ");", "$out.join('')"];
+
+        var concat = isNewEngine
+            ? "if(content!==undefined){$out+=content;return content;}"
+            : "$out.push(content);";
+
+        var print = "function(content){" + concat + "}";
+
+        var include = "function(id,data){"
+        +     "data=data||$data;"
+        +     "var content=$helpers.$include(id,data,$id);"
+        +     concat
+        + "}";
+
+
+        // html与逻辑语法分离
+        forEach(code.split(openTag), function (code, i) {
+            code = code.split(closeTag);
+
+            var $0 = code[0];
+            var $1 = code[1];
+
+            // code: [html]
+            if (code.length === 1) {
+
+                tempCode += html($0);
+
+            // code: [logic, html]
+            } else {
+
+                tempCode += logic($0);
+
+                if ($1) {
+                    tempCode += html($1);
+                }
+            }
+
+
+        });
+
+
+
+        code = tempCode;
+
+
+        // 调试语句
+        if (isDebug) {
+            code = "try{" + code + "}catch(e){"
+            +       "throw {"
+            +           "id:$id,"
+            +           "name:'Render Error',"
+            +           "message:e.message,"
+            +           "line:$line,"
+            +           "source:" + stringify(source)
+            +           ".split(/\\n/)[$line-1].replace(/^[\\s\\t]+/,'')"
+            +       "};"
+            + "}";
+        }
+
+
+        code = variables + replaces[0] + code
+        + "return new String(" + replaces[3] + ");";
+
+
+        try {
+
+            var Render = new Function("$data", "$id", code);
+            Render.prototype = prototype;
+
+            return Render;
+
+        } catch (e) {
+            e.temp = "function anonymous($data,$id) {" + code + "}";
+            throw e;
+        }
+
+
+
+
+        // 处理 HTML 语句
+        function html (code) {
+
+            // 记录行号
+            line += code.split(/\n/).length - 1;
+
+            // 压缩多余空白与注释
+            if (template.isCompress) {
+                code = code
+                .replace(/[\n\r\t\s]+/g, ' ')
+                .replace(/<!--.*?-->/g, '');
+            }
+
+            if (code) {
+                code = replaces[1] + stringify(code) + replaces[2] + "\n";
+            }
+
+            return code;
+        }
+
+
+        // 处理逻辑语句
+        function logic (code) {
+
+            var thisLine = line;
+
+            if (parser) {
+
+                 // 语法转换插件钩子
+                code = parser(code);
+
+            } else if (isDebug) {
+
+                // 记录行号
+                code = code.replace(/\n/g, function () {
+                    line ++;
+                    return "$line=" + line +  ";";
+                });
+
+            }
+
+
+            // 输出语句. 转义: <%=value%> 不转义:<%==value%>
+            if (code.indexOf('=') === 0) {
+
+                var isEscape = code.indexOf('==') !== 0;
+
+                code = code.replace(/^=*|[\s;]*$/g, '');
+
+                if (isEscape && template.isEscape) {
+
+                    // 转义处理，但排除辅助方法
+                    var name = code.replace(/\s*\([^\)]+\)/, '');
+                    if (
+                        !_helpers.hasOwnProperty(name)
+                        && !/^(include|print)$/.test(name)
+                    ) {
+                        code = "$escape(" + code + ")";
+                    }
+
+                } else {
+                    code = "$string(" + code + ")";
+                }
+
+
+                code = replaces[1] + code + replaces[2];
+
+            }
+
+            if (isDebug) {
+                code = "$line=" + thisLine + ";" + code;
+            }
+
+            getKey(code);
+
+            return code + "\n";
+        }
+
+
+        // 提取模板中的变量名
+        function getKey (code) {
+
+            code = getVariable(code);
+
+            // 分词
+            forEach(code, function (name) {
+
+                // 除重
+                if (!uniq.hasOwnProperty(name)) {
+                    setValue(name);
+                    uniq[name] = true;
+                }
+
+            });
+
+        }
+
+
+        // 声明模板变量
+        // 赋值优先级:
+        // 内置特权方法(include, print) > 私有模板辅助方法 > 数据 > 公用模板辅助方法
+        function setValue (name) {
+
+            var value;
+
+            if (name === 'print') {
+
+                value = print;
+
+            } else if (name === 'include') {
+
+                prototype["$include"] = _helpers['$include'];
+                value = include;
+
+            } else {
+
+                value = "$data." + name;
+
+                if (_helpers.hasOwnProperty(name)) {
+
+                    prototype[name] = _helpers[name];
+
+                    if (name.indexOf('$') === 0) {
+                        value = "$helpers." + name;
+                    } else {
+                        value = value
+                        + "===undefined?$helpers." + name + ":" + value;
+                    }
+                }
+
+
+            }
+
+            variables += name + "=" + value + ",";
+        }
+
+
+        // 字符串转义
+        function stringify (code) {
+            return "'" + code
+            // 单引号与反斜杠转义
+            .replace(/('|\\)/g, '\\$1')
+            // 换行符转义(windows + linux)
+            .replace(/\r/g, '\\r')
+            .replace(/\n/g, '\\n') + "'";
+        }
+
+
+    };
+})();
+
+return template;
+
+});
+
+/* @source tui/widget.js */;
+
+
+define('tui/widget', [
+  "tui/event",
+  "tui/art"
+], function(Event, Art) {
+
+	// 分割 event key
+	function splitEventKey(eventKey, defaultEventType) {
+		var type;
+		var selector;
+		var arr = eventKey.split(' ');
+		if (arr.length == 1) {
+			type = defaultEventType;
+			selector = eventKey;
+		} else {
+			type = arr.shift();
+			selector = arr.join(' ');
+		}
+		return [type, selector];
+	}
+
+	var Widget = Event.extend({
+		// 与 widget 关联的 DOM 元素 (jQuery对象)
+		element : null,
+		// 默认模板
+		template : '<div></div>',
+		// 默认事件类型
+		eventType : 'click',
+		// 默认数据
+		model : {},
+		// 事件代理，格式为：
+		// {
+		//     'mousedown .title': 'edit',
+		//     'click .open': function(ev) { ... }
+		// }
+		events : {},
+		// 组件的定位节点 (jQuery对象)
+		targetNode : $(document.body),
+		// 渲染方法，"append","prepend","before","after","replaceWith"
+		renderMethod : 'append',
+		// 构造方法
+		initialize : function(config) {
+			var self = this;
+			config = config || {};
+			Widget.superClass.initialize.call(self);
+
+			self.model = $.extend(true, {}, self.model);
+			self.events = $.extend(true, {}, self.events);
+
+			$.each(['element', 'targetNode'], function() {
+				(typeof config[this] !== 'undefined') && (self[this] = $(config[this]));
+			});
+
+			$.each(['template', 'eventType', 'renderMethod'], function() {
+				(typeof config[this] !== 'undefined') && (self[this] = config[this]);
+			});
+
+			$.each(['model', 'events'], function() {
+				(typeof config[this] !== 'undefined') && $.extend(self[this], config[this]);
+			});
+		},
+
+		// 在 this.element 内寻找匹配节点
+		find : function(selector) {
+			return this.element.find(selector);
+		},
+
+		// 注册事件代理
+		delegate : function(events, handler) {
+			var self = this;
+			// 允许使用：widget.delegate('click p', function(ev) { ... })
+			if ($.type(events) == 'string' && $.isFunction(handler)) {
+				var obj = {};
+				obj[events] = handler;
+				events = obj;
+			}
+			// key 为 'event selector'
+			$.each(events, function(key, val) {
+				var callback = function(e) {
+					if ($.isFunction(val)) {
+						return val.call(self, e);
+					} else {
+						return self[val](e);
+					}
+				};
+				var arr = splitEventKey(key, self.eventType);
+				self.element.on(arr[0], arr[1], callback);
+			});
+			return self;
+		},
+
+		// 卸载事件代理
+		undelegate : function(eventKey) {
+			var self = this;
+			// key 为 'event selector'
+			var arr = splitEventKey(eventKey, self.eventType);
+			self.element.off(arr[0], arr[1]);
+			return self;
+		},
+
+		// 将 widget 渲染到页面上
+		render : function(model) {
+			var self = this;
+
+			if (!self.element || !self.element[0]) {
+				// self.element = $(Template.convertTpl(self.template, $.extend({getUrl: this.getUrl || getUrl}, model || self.model)));
+				self.element = $(Art.compile(self.template)($.extend({getUrl: this.getUrl || getUrl}, model || self.model)));
+			}
+
+			self.delegate(self.events);
+
+			if (self.renderMethod) {
+				self.targetNode[self.renderMethod](self.element);
+			}
+
+			self.trigger('render:success', []);
+			return self;
+		},
+		update: function(data){
+			if (this.renderMethod) {
+				// this.targetNode[this.renderMethod](Template.convertTpl(this.template, $.extend({getUrl: this.getUrl || getUrl}, data)));
+				this.targetNode[this.renderMethod](Art.compile(this.template)($.extend({getUrl: this.getUrl || getUrl}, data)));
+				self.trigger('update:success', []);
+			}
+		}
+	});
+	
+	function getUrl(url){
+		return url;
+	}
+	
+	return Widget;
+
+});
+
+/* @source tui/mask.js */;
+
+
+define('tui/mask', [], function() {
+	var $node = $('<div class="tui_mask">');
+	var init;
+	var $win = $(window);
+	var $doc = $(document);
+	var $body = $(document.body);
+	var ie6 = $.browser.msie && $.browser.version < 7;
+	var ieMaxHeight = 4096;
+
+	function cb() {
+		var width = Math.max($win.width(), $doc.width());
+		var height = Math.max($win.height(), $doc.height());
+		var position = 'absolute';
+		var top = 0;
+
+		// Bugfix: http://jira.intra.tudou.com/browse/FLASH-3072
+		if ($.browser.msie && height > ieMaxHeight) {
+			if (!ie6) {
+				position = 'fixed';
+			} else {
+				top = $win.scrollTop();
+				if (top + ieMaxHeight > height) {
+					top = height - ieMaxHeight;
+				}
+			}
+			height = ieMaxHeight;
+		}
+
+		$node.css({
+			position : position,
+			top : top,
+			width: width,
+			height: height
+		});
+	}
+
+	return {
+		node: function() {
+			return $node;
+		},
+		resize: function() {
+			cb();
+		},
+		show: function(zIndex) {
+			$win.bind('resize', cb);
+			if (ie6) {
+				$win.bind('scroll', cb);
+			}
+			$node.css('z-index', zIndex || 90000);
+			this.resize();
+			if(!init) {
+				$body.append($node);
+				init = true;
+			}
+			else
+				$node.show();
+			return this;
+		},
+		hide: function(remove) {
+			$win.unbind('resize', cb);
+			if (ie6) {
+				$win.unbind('scroll', cb);
+			}
+			if(remove) {
+				$node.remove();
+				init = false;
+			}
+			else
+				$node.hide();
+			return this;
+		},
+		update: function() {
+			cb();
+		},
+		state: function() {
+			return $node.is(':visible');
+		}
+	};
+});
+
+/* @source tui/browser.js */;
+
+
+define('tui/browser', [], function() {
+
+	var userAgent = navigator.userAgent.toLowerCase();
+
+	// userAgent = 'Mozilla/5.0 (iPod; CPU iPhone OS 6_0_1 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Mobile/10A523'.toLowerCase();
+	// userAgent = 'Mozilla/5.0 (Linux; U; Android 4.0.3; zh-cn; N12 Build/IML74K) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Safari/534.30'.toLowerCase();
+	// userAgent = 'Mozilla/5.0 (compatible; MSIE 9.0; Windows Phone OS 7.5; Trident/5.0; IEMobile/9.0; NOKIA; Nokia 710)'.toLowerCase();
+	// userAgent = 'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0; Touch)';
+
+	var browserUA = {
+		ie6 : $.browser.msie && $.browser.version == 6.0,
+		// html5相关特性
+		html5: function(){
+			var input = document.createElement('input');
+			var video = document.createElement('video');
+			return {
+				// 支持video标签，支持h264
+				'h264': !!(video.canPlayType && video.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"').replace(/no/, '')),
+				'history': !!(window.history && window.history.pushState && window.history.popState),
+				'placeholder': "placeholder" in input
+			};
+		},
+		//语言特性
+		lang: (navigator.language || navigator.systemLanguage).toLowerCase(),
+		iOS: (userAgent.match(/(ipad|iphone|ipod)/) || [])[0],
+		iOSVersion: (userAgent.match(/os\s+([\d_]+)\s+like\s+mac\s+os/) || [0,'0_0_0'])[1].split('_'),
+		wphone: parseFloat((userAgent.match(/windows\sphone\s(?:os\s)?([\d.]+)/) || ['','0'])[1]),
+		android: parseFloat((userAgent.match(/android[\s|\/]([\d.]+)/) || ['','0'])[1])
+
+	};
+
+	// 检测UA及设备陀螺仪旋转值判断是否为移动设备
+	browserUA.isMobile = !!browserUA.iOS || !!browserUA.wphone || !!browserUA.android || (window.orientation !== undefined) || false;
+
+	// 检测移动设备是否为平板
+	browserUA.isPad = browserUA.isMobile && (browserUA.iOS == 'ipad' || userAgent.indexOf('mobile') == -1 || (userAgent.indexOf('windows nt') != -1 && userAgent.indexOf('touch') != -1)) || false;
+
+	return browserUA;
+});
+
+/* @source tui/dialog.js */;
+
+
+define('tui/dialog', [
+  "tui/browser",
+  "tui/art",
+  "tui/mask",
+  "tui/widget",
+  "tui/drag"
+], function(Browser, Art, Mask, Widget, Drag) {
+
+	var win = $(window);
+
+	var ie67 = ($.browser.msie && $.browser.version <= 7) || !$.support.boxModel;
+
+	var zIndex = 10002;
+
+	var buttonsTemplate = '<div class="tui_dialog_button"><% for (var i = 0; i < buttons.length; i++) { %>'
+		+ '<a data-role="button_<%=i%>" href="#" <%if(buttons[i].className){%>class="<%=buttons[i].className%>"<%}%>><%=buttons[i].name%></a>'
+		+ '<% } %></div>';
+
+	var template = '<div class="tui_dialog <%=className%>"><div<% if (hasWrap) { %> class="tui_dialog_wrap"<% } %>><div class="tui_dialog_holder" data-role="holder">'
+		+ '<div class="tui_dialog_resize"></div>'
+		+ '<div class="tui_dialog_w_tp"></div><div class="tui_dialog_w_bm"></div>'
+		+ '<div class="tui_dialog_w_lf"></div><div class="tui_dialog_w_rt"></div>'
+		+ '<div class="tui_dialog_w_tl"></div><div class="tui_dialog_w_tr"></div>'
+		+ '<div class="tui_dialog_w_bl"></div><div class="tui_dialog_w_br"></div>'
+		+ '<div class="tui_dialog_header" data-role="header"><span class="tui_dialog_close" data-role="close" title="关闭">X</span>'
+		+ '<div class="tui_dialog_title" data-role="title"><%=title%></div><div class="tui_dialog_bar"><%=bar%></div></div>'
+		+ '<div class="tui_dialog_content" data-role="content"></div>'
+		+ '<% if (buttons.length > 0) { %><div class="tui_dialog_footer" data-role="footer">' + buttonsTemplate + '</div><% } %>'
+		+ '<% if (info) { %><div class="tui_dialog_info"><%=info%></div><% } %>'
+		+ '</div></div></div>';
+
+	var Dialog = Widget.extend({
+		// 事件代理
+		events : {
+			'click [data-role=close]' : function(e) {
+				e.preventDefault();
+				this.close();
+			}
+		},
+		// 构造方法
+		initialize : function(config) {
+			var self = this;
+
+			var defaults = {
+				template : template,
+				buttons : [],
+				zIndex : zIndex,
+				hasDrag : true,
+				hasMask : true,
+				isFixed : true
+			};
+
+			config = $.extend(defaults, config || {});
+
+			zIndex = config.zIndex;
+
+			var hasWrap = $.browser.msie && parseFloat($.browser.version) < 9;
+			if (typeof config.hasWrap != 'undefined') {
+				hasWrap = config.hasWrap;
+			}
+
+			var data = {
+				hasWrap : hasWrap,
+				className : config.className || 'tudou_dialog',
+				title : config.title || '',
+				bar : config.bar || '',
+				info : config.info || '',
+				buttons : config.buttons
+			};
+			config.element = $(Art.compile(config.template)(data));
+
+			Dialog.superClass.initialize.call(this, config);
+
+			self.dom = {
+				holder : self.element.find('[data-role=holder]'),
+				header : self.element.find('[data-role=header]'),
+				title : self.element.find('[data-role=title]'),
+				content : self.element.find('[data-role=content]'),
+				footer : self.element.find('[data-role=footer]'),
+				close : self.element.find('[data-role=close]')
+			};
+
+			self.config = config;
+
+			self.open();
+
+			var keyDownCallBack = function(e){
+				if(e.keyCode == 27){ // Esc
+					self.close();
+					$(document).unbind('keydown', keyDownCallBack);
+				}
+			}
+			$(document).keydown(keyDownCallBack);
+		},
+		title : function(html) {
+			this.dom.title.html(html);
+			return this;
+		},
+		content : function(html) {
+			this.dom.content.html(html);
+			return this;
+		},
+		open : function() {
+			var self = this;
+			var config = self.config;
+			var element = self.element;
+			var dom = self.dom;
+
+			// 设置面板层叠索引值
+			element.css('z-index', zIndex);
+			zIndex += 2;
+
+			if (config.hasMask) {
+				Mask.show(element.css('z-index') - 1);
+			}
+
+			element.css('position', (ie67 || !config.isFixed) ? 'absolute' : 'fixed');
+
+			self.iframeMask = $('<iframe>', {
+				src: "about:blank",
+				frameborder: 0,
+				css: {
+					border : 'none',
+					'z-index' : -1,
+					position : 'absolute',
+					top : 0,
+					left : 0,
+					width : '100%',
+					height : '100%'
+				}
+			}).prependTo(dom.holder);
+
+			// dom生成后再写入内容，防止内容中的flash被重置
+			self.content(config.content || '');
+
+			$.each(config.buttons, function(i) {
+				self.events['[data-role=button_' + i + ']'] = this.callback;
+			});
+
+			if (!self.element.parent()[0]) {
+				self.render();
+			}
+
+			self.element.show();
+
+			self.locate();
+
+			self.resizeLocate = function(e) {
+				self.locate();
+			};
+			win.bind('resize', self.resizeLocate);
+
+			if (ie67 && config.isFixed) {
+				self.iefixScroll = function(e) {
+					self.locate();
+				};
+				win.bind('scroll', self.iefixScroll);
+
+				self.iframeMask.css({
+					height: dom.holder.height()
+				});
+			}
+
+			if (self.config.hasDrag) {
+				new Drag(element, {
+					handler : dom.header,
+					limit : true
+				});
+			}
+
+			return self;
+		},
+		close : function(isHide) {
+			var self = this;
+
+			if (self.config.hasMask) {
+				Mask.hide(true);
+			}
+
+			self.trigger('close', [self]);
+
+			if(!isHide) {
+				self.element.find('iframe').remove();
+			}
+			self.element[isHide ? 'hide' : 'remove']();
+
+			if (self.resizeLocate) {
+				win.unbind('resize', self.resizeLocate);
+			}
+
+			if (self.iefixScroll) {
+				win.unbind('scroll', self.iefixScroll);
+				self.iefixScroll = null;
+			}
+
+			return self;
+		},
+		locate: function() {
+			var self = this;
+			var left = Math.max(0, (win.width() - self.element.width()) >> 1);
+            if (!self.config.isFixed) {
+                var top = win.scrollTop() + (win.height() - self.element.height()) / 2;
+            } else {
+                var top = (Math.max(0, (win.height() - self.element.height()) >> 1)) + (ie67 ? win.scrollTop() : 0);
+            }
+			self.element.css({
+				left : left,
+				top : top
+			});
+			return self;
+		}
+	});
+
+	Dialog.confirm = function(msg, callback) {
+		var op = {};
+		if ($.isPlainObject(msg)) {
+			op = msg;
+			msg = op.msg;
+			callback = op.callback;
+		}
+		return new Dialog($.extend({
+			className: 'tudou_dialog alert',
+			title: '提示',
+			content: '<div class="tui_dialog_text">' + msg + '</div>',
+			hasMask: true,
+			buttons: [{
+				name: '确定',
+				callback: function(e){
+					e.preventDefault();
+					callback && callback.call(this);
+					this.close();
+				}
+			}, {
+				name: '取消',
+				callback: function(e){
+					e.preventDefault();
+					this.close();
+				}
+			}]
+		}, op));
+	};
+
+	Dialog.alert = function(msg, callback) {
+		var op = {};
+		if ($.isPlainObject(msg)) {
+			op = msg;
+			msg = op.msg;
+			callback = op.callback;
+		}
+		return new Dialog($.extend({
+			className: 'tudou_dialog alert',
+			title: '提示',
+			content: '<div class="tui_dialog_text">' + msg + '</div>',
+			hasMask: true,
+			buttons: [{
+				name: '确定',
+				callback: function(e){
+					e.preventDefault();
+					callback && callback.call(this);
+					this.close();
+				}
+			}]
+		}, op));
+	};
+
+	return Dialog;
+});
+
+/* @source app/login.js */;
+
+define("app/login", [
+  "tui/event",
+  "tui/art",
+  "tui/dialog",
+  "tui/html5form",
+], function( Event, Art, Dialog, Html5form, require, exports){
+	
+	var Login = new Event();
+	var codeSucc;
+	var loginArt = Art.compile('<h3>登录</h3>\n<a href="#" class="close" data-role="close">X</a>\n<form id="loginForm">\n<div class="l"><input class="tel" name="name" type="text" placeholder="用户名" /></div>\n<div class="l"><input class="pwd" name="pwd" type="password" placeholder="密码" /></div>\n<div class="l"><input class="codeipt" name="code" type="text" placeholder="验证码" /><img src="http://img3.imgtn.bdimg.com/it/u=2142985517,724352710&fm=21&gp=0.jpg" codeId="<%=code%>" class="code" /></div>\n<div class="btn">\n<a class="submit" href="#">登 录</a>\n</div>\n</form>');
+
+	function noop(){}
+
+	Login.needLogin = function(node, callback) {
+		if(typeof node === 'function'){
+			callback = node;
+			node = null;
+		}else{
+			node = node || null;
+		}
+
+		if(node){
+			var $content = $(node);
+		}else{
+			var dlg = new Dialog({
+				className : 'login_dialog',
+				content : loginArt({code: 123})
+			});
+
+			var $content = dlg.dom.content;	
+		}
+
+
+		var $form = $content.find('form');
+		var $tel = $form.find('[name=name]');
+		var $pwd = $form.find('[name=pwd]');
+		var $code = $form.find('[name=code]');
+
+		var h5form = new Html5form($form, Html5form.VALID_BLUR);
+		var params = {};
+
+		$content.on('click', '.submit', function(e){
+			e.preventDefault();
+			var name = $tel.val().trim();
+
+			if(!name.length){
+				h5form.tip($tel, '请填写正确的用户名');
+				return;
+			}
+
+			var pwd = $pwd.val().trim();
+			if(!pwd.length){
+				h5form.tip($pwd, '请输入密码');
+				return;
+			}
+			if(!codeSucc){
+				h5form.tip($code, '请输入正确的验证码');
+				return;
+			}
+
+			var params = $form.serialize();
+
+			params =+ '&act=login'
+
+			$.post('login.php', params, function(res){
+
+				if(res == 1){
+					callback && callback();
+				}else{
+					Dialog.alert('用户名或者密码不正确');
+				}
+
+			});
+
+		}).on('click', '.code', function(e){
+			e.preventDefault();
+
+			var me = $(this);
+			var id = me.attr('codeId');
+
+			me.attr('src', 'get_code.php?load=yes&id=' + id+ '&' + Math.random());
+		});
+
+		$code.on('input', function(){
+
+			var me =  $(this);
+			var val = me.val();
+			var code = $form.find('.code');
+
+			if(val.length == 5){
+
+				$.post('check.php', { act: 'code', v: val , id: code.attr('codeId') }, function(res) {
+					codeSucc = res == 1;
+
+					if(!codeSucc){
+						h5form.tip(me, '验证码无效');
+
+						code.attr('src', 'get_code.php?load=yes&id=' + code.attr('codeId') + '&' + Math.random());
+					}
+
+				}, 'json');
+
+			}
+
+		});
+	};
+
+	return Login;
+
+});
+/* @source tui/scrollLoader.js */;
+
+﻿define('tui/scrollLoader', [], function() {
+
+	var win = $(window),
+		height = win.height(),
+		queue = [],
+		m = {
+			node: function(n, size) { //传入节点计算top值
+				n = $(n);
+				return this.y(n.offset() ? n.offset().top : 0, size ? n.outerHeight(true) : undefined);
+			},
+			y: function(py, ps) { //直接传入top值，第2个参数详见size，不设置时单向计算，只要在滚动条之上的都加载
+				this._y = py;
+				this._s = ps || 0;
+				return this;
+			},
+			threshold: function(th) { //传入节点计算top值
+				this._th = th;
+				return this;
+			},
+			size: function(s) { //设置size时会计算滚出区域情况，在可视区域之外都不加载
+				this._s = s;
+				return this;
+			},
+			delay: function(d) { //仅size时有效，延迟加载可是区域内，防止滚动条瞬间拖拽情况
+				this._d = d;
+				return this;
+			},
+			time: function(t) { //多少时间后加载器必定执行
+				var self = this;
+				self._t = t;
+				setTimeout(function() {
+					self.start();
+				}, t);
+				return self;
+			},
+			load: function() { //加载回调
+				this._cb = this._cb.concat(Array.prototype.slice.call(arguments, 0));
+				this._no && queue.push(this);
+				this._no = false;
+				this._f && this.fire();
+				this._f = false;
+				return this;
+			},
+			start: function() { //开始加载并清空加载器
+				this._enable && this._cb.forEach(function(cb) {
+					cb();
+				});
+				return this.cancel();
+			},
+			cancel: function() { //永久取消此次延迟加载
+				this.disable();
+				for(var i = 0, len = queue.length; i < len; i++) {
+					if(queue[i] == this) {
+						queue.splice(i, 1);
+						break;
+					}
+				}
+			},
+			enable: function() { //设置加载状态为可用
+				this._enable = true;
+				return this;
+			},
+			disable: function() { //设置加载状态为不可用
+				this._enable = false;
+				return this;
+			},
+			fire: function(top, he) { //手动尝试触发判断加载条件
+				top = top || win.scrollTop();
+				he = he || height;
+				var self = this;
+				if(self._s) {
+					clearTimeout(self._timeout);
+					self._timeout = setTimeout(function() {
+						if(self._enable
+							&& self._y <= (top + he + self._th)
+							&& (self._y + self._s) >= (top - self._th)
+						)
+							cb();
+					}, self._d);
+				}
+				else {
+					if(this._enable
+						&& this._y <= (top + he + this._th)
+					)
+						cb();
+				}
+				function cb() {
+					self._cb.forEach(function(cb) {
+						cb();
+					});
+					self.cancel();
+				}
+				return this;
+			}
+		},
+		Klass = function() {
+			this._y = 0; //y坐标值
+			this._th = 0; //偏移量
+			this._d = 0; //延迟
+			this._s = 0; //尺寸，等于0的时候不侦听尺寸，即滚动条区域以上直接加载；否则判断是否在显示范围内
+			this._cb = []; //回调
+			this._no = true; //是否被加入侦听
+			this._enable = true; //是否启用
+			this._timeout = null; //延迟侦听器
+			this._f = true; //首次调用状态，因为f5后一开始滚动条就有可能在下方，所以初期不onscroll也要调用
+		},
+		instance = {};
+	Klass.prototype = m;
+
+	function onScroll() {
+		var top = win.scrollTop();
+		queue.concat().forEach(function(o) {
+			o.fire(top, height);
+		});
+	}
+	win.bind('resize', function() {
+		height = win.height();
+		onScroll();
+	});
+	win.bind('scroll', onScroll);
+	
+	for(var i in m) {
+		(function(key) {
+			instance[key] = function() {
+				var obj = new Klass;
+				return obj[key].apply(obj, Array.prototype.slice.call(arguments, 0));
+			};
+		})(i);
+	}
+	return instance;
+
+});
+
+/* @source tui/lazyImageLoader.js */;
+
+/*
+ * 基于TUI.scrollLoader 图片分段延后加载
+ * 默认对加classname为lazyImg的img标签进行延后替换处理
+ */
+define('tui/lazyImageLoader', [
+  "tui/scrollLoader"
+], function(scrollLoader){
+	var imgs, size, attr, zone = {};
+
+	function loadImage(op){
+		op = op || {};
+
+		size = op.size || 300;				// 图片分块区域大小
+		attr = op.attr || 'alt';			// x
+		imgs = op.imgs || $('img.lazyImg');	// 需要延后到图片对象
+
+		/*for (var i = 0, l = imgs.length; i < l; i++) {
+		 var img = imgs[i];
+		 var top = $(img).offset().top>0 ? $(img).offset().top : 0 || $(img).parents(':visible').offset().top || 0;
+		 // 图片按实际位置分段
+		 addToZone(top, img);
+		 }*/
+		var optZone = [];
+		imgs.each(function(){
+			var $el = $(this),
+				offset = $el.offset(),
+				top = offset.top > 0 ? offset.top : ($el.parents(':visible') && $el.parents(':visible').offset()) ? $el.parents(':visible').offset().top : 0;
+			addToZone(top, this, optZone);
+		});
+		for (var z in optZone) {
+			if (optZone.hasOwnProperty(z)) {
+				var images = $(optZone[z]);
+				images.each(function(){
+					var node = this;
+					scrollLoader.y(z).threshold(size).load(function(){
+						var _img = $(node);
+						_img.attr('src', _img.attr(attr));
+						_img.removeAttr(attr);
+						if (_img[0].className.indexOf('lazyImg') !== -1) {
+							_img.removeClass('lazyImg');
+						}
+					})
+
+				});
+			}
+		}
+	}
+
+	function addToZone(top, img, optZone){
+		top = top - top % size;
+		//zone[top] = zone[top] || [];
+		//zone[top].push(img);
+		optZone[top] = optZone[top] || [];
+		optZone[top].push(img);
+	}
+
+	return loadImage;
+});
+
+/* @source module/switchtab.js */;
+
+/**
+ * 全站Tab切换、滚动Banner
+ */
+define("module/switchtab", [
+  "tui/lazyImageLoader",
+  "tui/event"
+], function(LazyImageLoader, Event) {
+    /**
+     * jQuery Easing v1.3 - http://gsgd.co.uk/sandbox/jquery/easing/
+     * @note jQuery动画方法的缓冲效果
+     */
+    jQuery.easing['jswing'] = jQuery.easing['swing'];
+    jQuery.extend( jQuery.easing,{
+        // t: current time, b: begInnIng value, c: change In value, d: duration
+        easeInOutQuad: function (x, t, b, c, d) { //===easeInOutCubic
+            if ((t/=d/2) < 1) return c/2*t*t*t + b;
+            return c/2*((t-=2)*t*t + 2) + b;
+        }
+    });
+
+    function getTabIndex(obj){
+        if (obj && obj.tagName) {
+            var me = (obj.tagName.toLowerCase() == 'a') ? $(obj) : $(obj).find('a');
+            me = me.length ? me : $(obj);
+            return (me.attr('rel') || me.attr('href').replace(/.*#(\d+)$/, '$1') || 1) - 1;
+        } else {
+            return 0;
+        }
+    }
+
+    function clearTimer(timer){
+        var args = arguments;
+        for (var i = 0, l = args.length; i < l; i++) {
+            var timer = args[i];
+            if (timer) clearTimeout(timer);
+        }
+        return null;
+    }
+    
+    
+    var Klass = Event.extend({
+        initialize: function(op) {          
+            var self = this;
+            Klass.superClass.initialize.apply(self, arguments); 
+                
+            self.op = op || {};
+            self.op.slide = op.slide || false;
+            self.op.linktab = op.linktab || false;
+            self.op.clicktab = op.clicktab || false;
+            self.op.lazyContent = op.lazyContent || window.gLazyContent || false;           
+            
+            // 界面对象
+            var box = self.box = $(op.box);
+            var tab = self.tab = $(op.tab || '.tab li', box);
+            var panel = self.panel = $(op.panel || '.c', box);
+        
+            self.size = tab.length || panel.length;
+            self.loop = op.loop || 0;
+            self.current = getTabIndex(tab.filter('.current')[0]);
+    
+            // 横向滚动面板
+            if (self.op.slide) {
+                self.scroll = panel.parent().parent();
+                // 滚动位置归零
+                self.scroll.scrollLeft(0);
+                // 复制第一个拼接
+                LazyImageLoader({imgs: panel.eq(self.current).find('.lazyImg')});
+                panel.parent().append(panel.eq(0).clone());
+                self.panel = $(op.panel || '.c', box);
+                // 滚动参数设置
+                self.width = panel.width();
+                self.delay = op.delay || 700;
+                self.loop = (self.loop || 5000) + self.delay;
+                self.anilock = false;
+            }
+    
+            if (self.size < 2) return;
+    
+            // 可点击Tab
+            if (self.op.clicktab) {
+                tab.click(function(event){
+                    event.preventDefault();
+                    self.go(getTabIndex(this));
+                });
+            } else {
+                // 非带链接Tab
+                if (!self.op.linktab) {
+                    tab.click(function(event){ event.preventDefault() });
+                }
+                tab.mouseenter(function(){
+                    clearTimer(self.timer, self.looptimer);
+                    var me = this;
+                    self.timer = setTimeout(function(){
+                        self.go(getTabIndex(me));
+                    }, 30);
+                }).mouseleave(function(){
+                    clearTimer(self.timer, self.looptimer);
+                    self.start();
+                });
+            }
+    
+            // 循环切换
+            if (self.loop) {
+                self.check(self.op.clicktab ? tab : null);
+                self.start();
+            }
+
+
+            tab.parent().on('click', 'a', function(event){
+                var href = $(this).attr('href');
+
+                if( !href || href == '#' || href.length < 5){
+                    event.preventDefault();
+                    //return false;
+                }
+            });                 
+        },
+        
+        on: function(type, o){
+            this.box.eventProxy(type, o);
+            return this;
+        },
+
+        go: function(cur, auto){
+            var self = this;
+            cur = auto ? cur : Math.min(Math.max(cur, 0), self.size - 1);
+            self.trigger('before', [self.current, cur, self]);
+            if (self.op.slide) {
+                if (self.anilock) {
+                    self.nextstep = function(){ self.animate(cur, auto); };
+                    return;
+                }
+                self.animate(cur, auto);
+            } else {
+                var prev = self.current;
+                                
+                self.current = cur % self.size;
+                self.trigger('change', [self.current, self]);
+                self.tab.removeClass('current').eq(self.current).addClass('current');
+
+                var isFade = self.op.fade;
+                var panels = self.panel;
+                
+                isFade ? panels.eq(prev).stop().fadeOut(100): panels.hide();
+                
+                panels.eq(self.current)[isFade ? 'fadeIn' : 'show'](self.op.duration ? self.op.duration : '');
+                self.trigger('after', [self.current, self]);
+            }
+        },
+        prev: function(auto){
+            this.go(this.current - 1, auto);
+        },
+        next: function(auto){
+            this.go(this.current + 1, auto);
+        },
+        start: function(start){
+            var self = this;
+            if (self.loop) {
+                clearTimer(self.looptimer);
+                if (start) self.start();
+                self.looptimer = setTimeout(function(){
+                    self.start();
+                    self.next(true);
+                }, self.loop);
+            }
+        },
+        stop: function(){
+            clearTimer(this.looptimer);
+        },
+        check: function(obj){
+            var self = this;
+            (obj || self.panel).mouseenter(function(){
+                clearTimer(self.looptimer);
+            }).mouseleave(function(){
+                clearTimer(self.looptimer);
+                self.start();
+            });
+        },
+        animate: function(pos, auto){
+            var self = this;
+            var current = self.current;
+            if (self.anilock || current == pos) return;
+            clearTimer(self.looptimer);
+            var size = self.size, width = self.width, panel = self.panel, scroll = self.scroll;
+            var s = current > pos ? 0 : width;
+            var c = current > pos ? width : 0;
+            pos = pos % (auto ? size + 1 : size);
+            LazyImageLoader({imgs: panel.eq(pos).show().find('.lazyImg')});
+            
+            scroll.scrollLeft(c);
+            self.tab.removeClass('current').eq(pos % size).addClass('current');
+            scroll.animate({ scrollLeft: s }, self.delay, 'easeInOutQuad', function(){
+                panel.eq(current).hide();
+                if (auto && pos == size) {
+                    pos = pos % size;
+                    LazyImageLoader({imgs: panel.eq(0).show().find('.lazyImg')});
+                    panel.eq(size).hide();
+                }
+                scroll.scrollLeft(0);
+                self.current = pos;
+                self.anilock = false;
+                self.trigger('after', [self.current, self]);
+                if (self.nextstep) {
+                    self.nextstep();
+                    self.nextstep = null;
+                }
+                if (auto) {
+                    self.start();
+                }
+            });
+            self.anilock = true;
+        }       
+        });
+
+    
+    return Klass;
+});
+
 /* @source app/form.js */;
 
 define("app/form", [
@@ -2677,112 +2789,6 @@ define("app/share", [], function() {
 
 
 });
-/* @source app/login.js */;
-
-define("app/login", [
-  "tui/event",
-  "tui/art",
-  "tui/dialog",
-  "tui/html5form",
-], function( Event, Art, Dialog, Html5form, require, exports){
-	
-	var Login = new Event();
-	var codeSucc;
-	var loginArt = Art.compile('<h3>登录</h3>\n<a href="#" class="close" data-role="close">X</a>\n<form id="loginForm">\n<div class="l"><input class="tel" name="name" type="text" placeholder="用户名" /></div>\n<div class="l"><input class="pwd" name="pwd" type="password" placeholder="密码" /></div>\n<div class="l"><input class="codeipt" name="code" type="text" placeholder="验证码" /><img src="http://img3.imgtn.bdimg.com/it/u=2142985517,724352710&fm=21&gp=0.jpg" codeId="<%=code%>" class="code" /></div>\n<div class="btn">\n<a class="submit" href="#">登 录</a>\n</div>\n</form>');
-
-	function noop(){}
-
-	Login.needLogin = function(op, callback) {
-		if(typeof op === 'function'){
-			callback = op;
-			op = {};
-		}else{
-			op = op || {};
-		}
-
-		var dlg = new Dialog({
-			className : 'login_dialog',
-			content : loginArt({code: 123})
-		});
-
-		var $content = dlg.dom.content;
-		var $form = $content.find('form');
-		var $tel = $form.find('.tel');
-		var $pwd = $form.find('.pwd');
-		var $code = $form.find('.codeipt');
-
-		var h5form = new Html5form($form, Html5form.VALID_BLUR);
-		var params = {};
-
-		$content.on('click', '.submit', function(e){
-			e.preventDefault();
-			var name = $tel.val().trim();
-
-			if(!name.length){
-				h5form.tip($tel, '请填写正确的用户名');
-				return;
-			}
-
-			var pwd = $pwd.val().trim();
-			if(!pwd.length){
-				h5form.tip($pwd, '请输入密码');
-				return;
-			}
-			if(!codeSucc){
-				h5form.tip($code, '请输入正确的验证码');
-				return;
-			}
-
-			var params = $form.serialize();
-
-			params =+ '&act=login'
-
-			$.post('login.php', params, function(res){
-
-				if(res == 1){
-					callback && callback();
-				}else{
-					Dialog.alert('用户名或者密码不正确');
-				}
-
-			});
-
-		}).on('click', '.code', function(e){
-			e.preventDefault();
-
-			var me = $(this);
-			var id = me.attr('codeId');
-
-			me.attr('src', 'get_code.php?load=yes&id=' + id+ '&' + Math.random());
-		});
-
-		$code.on('input', function(){
-
-			var me =  $(this);
-			var val = me.val();
-			var code = $form.find('.code');
-
-			if(val.length == 5){
-
-				$.post('check.php', { act: 'code', v: val , id: code.attr('codeId') }, function(res) {
-					codeSucc = res == 1;
-
-					if(!codeSucc){
-						h5form.tip(me, '验证码无效');
-
-						code.attr('src', 'get_code.php?load=yes&id=' + code.attr('codeId') + '&' + Math.random());
-					}
-
-				}, 'json');
-
-			}
-
-		});
-	};
-
-	return Login;
-
-});
 /* @source app/nav.js */;
 
 define("app/nav", [
@@ -2852,10 +2858,7 @@ define("app/nav", [
 			Login.needLogin(function(){
 				location.reload();
 			});
-
-
-
-		})
+		});
 
 	};
 
@@ -2863,7 +2866,7 @@ define("app/nav", [
 });
 /* @source  */;
 
-require(['app/nav', 'app/share', 'app/form', 'module/switchtab'], function(Nav, Share, Regform, Switchtab) {
+require(['app/nav', 'app/share', 'app/form', 'module/switchtab', 'app/login'], function(Nav, Share, Regform, Switchtab, Login) {
 	Nav.init({
 		disabled: false
 	});
@@ -2965,6 +2968,17 @@ require(['app/nav', 'app/share', 'app/form', 'module/switchtab'], function(Nav, 
 
 	Regform('.form-personal');
 	Regform('.form-enter');
+
+
+
+	$('.form-login').on('click', '.btn-login', function(e){
+		e.preventDefault();
+
+		Login.needLogin('.loginform', function(){
+
+		});
+	});
+
 
 });
 
