@@ -72,7 +72,7 @@ define([
 
 			var params = form.serialize();
 
-			$.post('reg.php', params, function(res){
+			$.post(bootDomain + 'reg.php', params, function(res){
 
 				if(res.code == 'success'){
 					new Dialog({
@@ -98,7 +98,7 @@ define([
 
 			var code = $form.find('.code');
 
-			code.attr('src', 'get_code.php?load=yes&id=' + code.attr('codeId') + '&' + Math.random());	
+			code.attr('src', bootDomain + 'get_code.php?load=yes&id=' + code.attr('codeId') + '&' + Math.random());	
 		}
 
 
@@ -130,7 +130,7 @@ define([
 				return;
 			}
 
-			$.post('check.php', { act: 'name', v: val }, function(res) {
+			$.post(bootDomain + 'check.php', { act: 'name', v: val }, function(res) {
 
 				nameSucc = res == 1;
 
@@ -151,7 +151,7 @@ define([
 				return;
 			}
 
-			$.post('check.php', { act: 'email', v: val}, function(res) {
+			$.post(bootDomain + 'check.php', { act: 'email', v: val}, function(res) {
 
 				emailSucc = res == 1;
 				if(!emailSucc){
@@ -169,7 +169,7 @@ define([
 
 			if(val.length == 5){
 
-				$.post('check.php', { act: 'code', v: val , id: code.attr('codeId') }, function(res) {
+				$.post(bootDomain + 'check.php', { act: 'code', v: val , id: code.attr('codeId') }, function(res) {
 					codeSucc = res == 1;
 
 					if(!codeSucc){

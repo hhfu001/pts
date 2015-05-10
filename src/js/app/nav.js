@@ -1,5 +1,5 @@
-define(['tui/art', './login'], function(Art, Login, require, exports) {
-	
+define(['tui/art','./config', './login'], function(Art, Config, Login, require, exports) {
+	Config();
 
 	function g_dropdown_toggle() {
 		$('#header').on('mouseenter', '.icon-weixin', function() {

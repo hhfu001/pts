@@ -25,7 +25,7 @@ define([
 			var code = $('#gCodeID').val();
 			var dlg = new Dialog({
 				className : 'login_dialog',
-				content : loginArt({code: code, t : Math.random()})
+				content : loginArt({code: code, domain: bootDomain, t : Math.random()})
 			});
 
 			var $content = dlg.dom.content;	
@@ -63,7 +63,7 @@ define([
 
 			params += '&act=login';
 
-			$.post('login.php', params, function(res){
+			$.post(bootDomain + 'login.php', params, function(res){
 
 				if(res == 1){
 					callback && callback();
@@ -84,7 +84,7 @@ define([
 
 			var code = $form.find('.code');
 
-			code.attr('src', 'get_code.php?load=yes&id=' + code.attr('codeId') + '&' + Math.random());	
+			code.attr('src', bootDomain + 'get_code.php?load=yes&id=' + code.attr('codeId') + '&' + Math.random());	
 		}
 
 		$code.on('input', function(){
@@ -95,7 +95,7 @@ define([
 
 			if(val.length == 5){
 
-				$.post('check.php', { act: 'code', v: val , id: code.attr('codeId') }, function(res) {
+				$.post(bootDomain + 'check.php', { act: 'code', v: val , id: code.attr('codeId') }, function(res) {
 					codeSucc = res == 1;
 
 					if(!codeSucc){
@@ -109,7 +109,23 @@ define([
 			}
 
 		});
+
 	};
+
+	
+
+	$('#gLogout').on('click', function(e){
+		e.preventDefault();
+
+		$.ajax({
+			url: 'login.php?act=logout',
+			params: { act: 'logout'},
+			done: function(){
+				location.reload();
+			}
+		});
+
+	});
 
 	return Login;
 
