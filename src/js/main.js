@@ -106,7 +106,7 @@ require(['app/nav', 'app/share', 'app/form', 'module/switchtab', 'app/login'], f
 	$('.form-login').on('click', '.btn-login', function(e){
 		e.preventDefault();
 
-		Login.needLogin('.loginform', function(){
+		Login.needLogin('.form-login', function(){
 
 		});
 	});

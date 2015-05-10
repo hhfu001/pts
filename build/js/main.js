@@ -2059,7 +2059,7 @@ define("app/login", [
 	
 	var Login = new Event();
 	var codeSucc;
-	var loginArt = Art.compile('<h3>登录</h3>\n<a href="#" class="close" data-role="close">X</a>\n<form id="loginForm">\n<div class="l"><input class="tel" name="name" type="text" placeholder="用户名" /></div>\n<div class="l"><input class="pwd" name="pwd" type="password" placeholder="密码" /></div>\n<div class="l"><input class="codeipt" name="code" type="text" placeholder="验证码" /><img src="http://img3.imgtn.bdimg.com/it/u=2142985517,724352710&fm=21&gp=0.jpg" codeId="<%=code%>" class="code" /></div>\n<div class="btn">\n<a class="submit" href="#">登 录</a>\n</div>\n</form>');
+	var loginArt = Art.compile('<h3>登录</h3>\n<a href="#" class="close" data-role="close">X</a>\n<form id="loginForm">\n<div class="l"><input class="tel" name="name" type="text" placeholder="用户名" /></div>\n<div class="l"><input class="pwd" name="pwd" type="password" placeholder="密码" /></div>\n<div class="l"><input class="codeipt" name="code" type="text" placeholder="验证码" /><img src="get_code.php?load=yes&id=<%=code%>&<%=t%>" codeId="<%=code%>" class="code" /></div>\n<div class="btn">\n<a class="submit" href="#">登 录</a>\n</div>\n</form>');
 
 	function noop(){}
 
@@ -2074,9 +2074,10 @@ define("app/login", [
 		if(node){
 			var $content = $(node);
 		}else{
+			var code = $('#gCodeID').val();
 			var dlg = new Dialog({
 				className : 'login_dialog',
-				content : loginArt({code: 123})
+				content : loginArt({code: code, t : Math.random()})
 			});
 
 			var $content = dlg.dom.content;	
@@ -2105,14 +2106,14 @@ define("app/login", [
 				h5form.tip($pwd, '请输入密码');
 				return;
 			}
-			if(!codeSucc){
+			if(!!codeSucc){
 				h5form.tip($code, '请输入正确的验证码');
 				return;
 			}
 
 			var params = $form.serialize();
 
-			params =+ '&act=login'
+			params += '&act=login';
 
 			$.post('login.php', params, function(res){
 
@@ -2120,6 +2121,7 @@ define("app/login", [
 					callback && callback();
 				}else{
 					Dialog.alert('用户名或者密码不正确');
+					getCode();
 				}
 
 			});
@@ -2127,11 +2129,15 @@ define("app/login", [
 		}).on('click', '.code', function(e){
 			e.preventDefault();
 
-			var me = $(this);
-			var id = me.attr('codeId');
-
-			me.attr('src', 'get_code.php?load=yes&id=' + id+ '&' + Math.random());
+			getCode();
 		});
+
+		function getCode(){
+
+			var code = $form.find('.code');
+
+			code.attr('src', 'get_code.php?load=yes&id=' + code.attr('codeId') + '&' + Math.random());	
+		}
 
 		$code.on('input', function(){
 
@@ -2146,8 +2152,8 @@ define("app/login", [
 
 					if(!codeSucc){
 						h5form.tip(me, '验证码无效');
-
-						code.attr('src', 'get_code.php?load=yes&id=' + code.attr('codeId') + '&' + Math.random());
+						getCode();
+						
 					}
 
 				}, 'json');
@@ -2654,11 +2660,15 @@ define("app/form", [
 
 			$.post('reg.php', params, function(res){
 
-				var dlg = new Dialog({
-					className : 'tip_dialog',
-					content : tipArt({msg : res.msg})
-				});
-				
+				if(res.code == 'success'){
+					new Dialog({
+						className : 'tip_dialog',
+						content : tipArt({msg : res.msg})
+					});
+
+				}else{
+					Dialog.alert(res.msg);
+				}
 
 			});
 
@@ -2666,14 +2676,16 @@ define("app/form", [
 
 		}).on('click', '.code', function(e){
 			e.preventDefault();
-
-			var me = $(this);
-			var ipt = form.find('.idcode');
-			var id = me.attr('codeId');
-
-			me.attr('src', 'get_code.php?load=yes&id=' + id+ '&' + Math.random());
+			getCode();
 		});
 
+
+		function getCode(){
+
+			var code = $form.find('.code');
+
+			code.attr('src', 'get_code.php?load=yes&id=' + code.attr('codeId') + '&' + Math.random());	
+		}
 
 
 		pwd.on('blur', function(){
@@ -2749,7 +2761,8 @@ define("app/form", [
 					if(!codeSucc){
 						h5form.tip(me, '验证码无效');
 
-						code.attr('src', 'get_code.php?load=yes&id=' + code.attr('codeId') + '&' + Math.random());
+						getCode();
+
 					}
 
 				}, 'json');
@@ -2974,7 +2987,7 @@ require(['app/nav', 'app/share', 'app/form', 'module/switchtab', 'app/login'], f
 	$('.form-login').on('click', '.btn-login', function(e){
 		e.preventDefault();
 
-		Login.needLogin('.loginform', function(){
+		Login.needLogin('.form-login', function(){
 
 		});
 	});

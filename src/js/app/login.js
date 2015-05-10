@@ -22,9 +22,10 @@ define([
 		if(node){
 			var $content = $(node);
 		}else{
+			var code = $('#gCodeID').val();
 			var dlg = new Dialog({
 				className : 'login_dialog',
-				content : loginArt({code: 123})
+				content : loginArt({code: code, t : Math.random()})
 			});
 
 			var $content = dlg.dom.content;	
@@ -53,14 +54,14 @@ define([
 				h5form.tip($pwd, '请输入密码');
 				return;
 			}
-			if(!codeSucc){
+			if(!!codeSucc){
 				h5form.tip($code, '请输入正确的验证码');
 				return;
 			}
 
 			var params = $form.serialize();
 
-			params =+ '&act=login'
+			params += '&act=login';
 
 			$.post('login.php', params, function(res){
 
@@ -68,6 +69,7 @@ define([
 					callback && callback();
 				}else{
 					Dialog.alert('用户名或者密码不正确');
+					getCode();
 				}
 
 			});
@@ -75,11 +77,15 @@ define([
 		}).on('click', '.code', function(e){
 			e.preventDefault();
 
-			var me = $(this);
-			var id = me.attr('codeId');
-
-			me.attr('src', 'get_code.php?load=yes&id=' + id+ '&' + Math.random());
+			getCode();
 		});
+
+		function getCode(){
+
+			var code = $form.find('.code');
+
+			code.attr('src', 'get_code.php?load=yes&id=' + code.attr('codeId') + '&' + Math.random());	
+		}
 
 		$code.on('input', function(){
 
@@ -94,8 +100,8 @@ define([
 
 					if(!codeSucc){
 						h5form.tip(me, '验证码无效');
-
-						code.attr('src', 'get_code.php?load=yes&id=' + code.attr('codeId') + '&' + Math.random());
+						getCode();
+						
 					}
 
 				}, 'json');

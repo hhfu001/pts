@@ -74,11 +74,15 @@ define([
 
 			$.post('reg.php', params, function(res){
 
-				var dlg = new Dialog({
-					className : 'tip_dialog',
-					content : tipArt({msg : res.msg})
-				});
-				
+				if(res.code == 'success'){
+					new Dialog({
+						className : 'tip_dialog',
+						content : tipArt({msg : res.msg})
+					});
+
+				}else{
+					Dialog.alert(res.msg);
+				}
 
 			});
 
@@ -86,14 +90,16 @@ define([
 
 		}).on('click', '.code', function(e){
 			e.preventDefault();
-
-			var me = $(this);
-			var ipt = form.find('.idcode');
-			var id = me.attr('codeId');
-
-			me.attr('src', 'get_code.php?load=yes&id=' + id+ '&' + Math.random());
+			getCode();
 		});
 
+
+		function getCode(){
+
+			var code = $form.find('.code');
+
+			code.attr('src', 'get_code.php?load=yes&id=' + code.attr('codeId') + '&' + Math.random());	
+		}
 
 
 		pwd.on('blur', function(){
@@ -169,7 +175,8 @@ define([
 					if(!codeSucc){
 						h5form.tip(me, '验证码无效');
 
-						code.attr('src', 'get_code.php?load=yes&id=' + code.attr('codeId') + '&' + Math.random());
+						getCode();
+
 					}
 
 				}, 'json');
