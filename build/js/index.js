@@ -2499,7 +2499,7 @@ define("app/login", [
 	
 	var Login = new Event();
 	var codeSucc;
-	var loginArt = Art.compile('<h3>登录</h3>\n<a href="#" class="close" data-role="close">X</a>\n<form id="loginForm">\n<div class="l"><input class="tel" name="name" type="text" placeholder="用户名" /></div>\n<div class="l"><input class="pwd" name="pwd" type="password" placeholder="密码" /></div>\n<div class="l"><input class="codeipt" name="code" type="text" placeholder="验证码" /><img src="get_code.php?load=yes&id=<%=code%>&<%=t%>" codeId="<%=code%>" class="code" /></div>\n<div class="btn">\n<a class="submit" href="#">登 录</a>\n</div>\n</form>');
+	var loginArt = Art.compile('<h3>登录</h3>\n<a href="#" class="close" data-role="close">X</a>\n<form id="loginForm">\n<div class="l"><input class="tel" name="name" type="text" placeholder="用户名" /></div>\n<div class="l"><input class="pwd" name="pwd" type="password" placeholder="密码" /></div>\n<div class="l"><input class="codeipt" name="code" type="text" placeholder="验证码" /><img src="<%=domain%>get_code.php?load=yes&id=<%=code%>&<%=t%>"  codeId="<%=code%>" class="code" /></div>\n<div class="btn">\n<a class="submit" href="#">登 录</a>\n</div>\n</form>');
 
 	function noop(){}
 
@@ -2517,7 +2517,7 @@ define("app/login", [
 			var code = $('#gCodeID').val();
 			var dlg = new Dialog({
 				className : 'login_dialog',
-				content : loginArt({code: code, t : Math.random()})
+				content : loginArt({code: code, domain: bootDomain, t : Math.random()})
 			});
 
 			var $content = dlg.dom.content;	
@@ -2546,7 +2546,7 @@ define("app/login", [
 				h5form.tip($pwd, '请输入密码');
 				return;
 			}
-			if(!!codeSucc){
+			if(!codeSucc){
 				h5form.tip($code, '请输入正确的验证码');
 				return;
 			}
@@ -2555,7 +2555,7 @@ define("app/login", [
 
 			params += '&act=login';
 
-			$.post('login.php', params, function(res){
+			$.post(bootDomain + 'login.php', params, function(res){
 
 				if(res == 1){
 					callback && callback();
@@ -2576,7 +2576,7 @@ define("app/login", [
 
 			var code = $form.find('.code');
 
-			code.attr('src', 'get_code.php?load=yes&id=' + code.attr('codeId') + '&' + Math.random());	
+			code.attr('src', bootDomain + 'get_code.php?load=yes&id=' + code.attr('codeId') + '&' + Math.random());	
 		}
 
 		$code.on('input', function(){
@@ -2587,7 +2587,7 @@ define("app/login", [
 
 			if(val.length == 5){
 
-				$.post('check.php', { act: 'code', v: val , id: code.attr('codeId') }, function(res) {
+				$.post(bootDomain + 'check.php', { act: 'code', v: val , id: code.attr('codeId') }, function(res) {
 					codeSucc = res == 1;
 
 					if(!codeSucc){
@@ -2601,18 +2601,53 @@ define("app/login", [
 			}
 
 		});
+
 	};
+
+
+
+	$('#gLogout').on('click', function(e){
+		e.preventDefault();
+
+		$.ajax({
+			url: 'login.php?act=logout',
+			params: { act: 'logout'},
+			success: function(){
+				location.reload();
+			}
+		});
+
+	});
 
 	return Login;
 
+});
+/* @source app/config.js */;
+
+define("app/config", [], function(){
+	return function(){
+
+		var localhost = location.hostname;
+		var boot_server;
+		if (localhost.indexOf("www.cnfashion.net") >=0) {
+			boot_server = "http://"+location.hostname;
+		} else {
+			boot_server = "http://"+location.hostname+"/yushi";
+		}
+
+		window.bootServer = boot_server;
+		window.bootDomain = boot_server+'/pc/reg/';
+		
+	}
 });
 /* @source app/nav.js */;
 
 define("app/nav", [
   "tui/art",
+  "app/config",
   "app/login"
-], function(Art, Login, require, exports) {
-	
+], function(Art, Config, Login, require, exports) {
+	Config();
 
 	function g_dropdown_toggle() {
 		$('#header').on('mouseenter', '.icon-weixin', function() {

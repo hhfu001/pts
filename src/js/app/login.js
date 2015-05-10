@@ -54,7 +54,7 @@ define([
 				h5form.tip($pwd, '请输入密码');
 				return;
 			}
-			if(!!codeSucc){
+			if(!codeSucc){
 				h5form.tip($code, '请输入正确的验证码');
 				return;
 			}
@@ -112,7 +112,7 @@ define([
 
 	};
 
-	
+
 
 	$('#gLogout').on('click', function(e){
 		e.preventDefault();
@@ -120,7 +120,7 @@ define([
 		$.ajax({
 			url: 'login.php?act=logout',
 			params: { act: 'logout'},
-			done: function(){
+			success: function(){
 				location.reload();
 			}
 		});

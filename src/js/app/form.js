@@ -73,13 +73,13 @@ define([
 			var params = form.serialize();
 
 			$.post(bootDomain + 'reg.php', params, function(res){
+				
+				if(typeof res == 'string'){
+					res = $.parseJSON(res);
+				}
 
 				if(res.code == 'success'){
-					new Dialog({
-						className : 'tip_dialog',
-						content : tipArt({msg : res.msg})
-					});
-
+					Dialog.alert(tipArt({msg : res.msg}));
 				}else{
 					Dialog.alert(res.msg);
 				}
@@ -131,7 +131,6 @@ define([
 			}
 
 			$.post(bootDomain + 'check.php', { act: 'name', v: val }, function(res) {
-
 				nameSucc = res == 1;
 
 				if(!nameSucc){
